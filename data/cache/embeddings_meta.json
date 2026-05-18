@@ -1,0 +1,1797 @@
+{
+  "generated_at": "2026-05-18T21:31:40Z",
+  "model": "voyage-3.5",
+  "dim": 1024,
+  "train_count": 279,
+  "test_count": 16,
+  "train": [
+    {
+      "source": "train",
+      "postId": 2,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/5-keys-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 4,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/risks-of-bad-breadth.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 5,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rob-lovelace-whats-in-store-2024.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 7,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/braving-bear-markets-5-lessons-seasoned-investors.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 8,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/braving-bear-markets-5-lessons-seasoned-investors.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 10,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/braving-bear-markets-5-lessons-seasoned-investors.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 11,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/braving-bear-markets-5-lessons-seasoned-investors.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 12,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/china-economic-recovery-will-take-time-2022.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 13,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/china-economic-recovery-will-take-time-2022.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 14,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/weight-loss-drugs-could-reshape-industries-beyond-health-care.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 15,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/weight-loss-drugs-could-reshape-industries-beyond-health-care.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 16,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/ir-plan-review-tips.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 17,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/ir-plan-review-tips.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 18,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/what-do-with-cash-fed-changes-course.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 19,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/what-do-with-cash-fed-changes-course.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 20,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/what-do-with-cash-fed-changes-course.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 21,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-views-future-growth-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 22,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-views-future-growth-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 23,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-views-future-growth-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 24,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-views-future-growth-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 26,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-laws-innovation-investment-opportunity.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 27,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/japan-reforms-stock-valuations.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 28,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/ai-tech-mega-cycle.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 29,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/Europe-consumer-spending-returns.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 30,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/Europe-consumer-spending-returns.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 31,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/market-volatility-long-term-opportunity.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 32,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/market-volatility-long-term-opportunity.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 33,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/market-volatility-long-term-opportunity.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 34,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/market-volatility-long-term-opportunity.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 35,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/markowitz-legacy.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 36,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/investment-grade-credit-resilience.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 37,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/6-books-summer-reading.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 38,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/inflation-transitory-troublesome.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 39,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/inflation-transitory-troublesome.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 40,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/inflation-transitory-troublesome.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 44,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/will-dollar-continue-falling.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 45,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/will-dollar-continue-falling.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 156,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/dividend-rotation-inflation.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 157,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/dividend-rotation-inflation.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 158,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/world-markets-1q.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 159,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/7-book-ideas-2024.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 160,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/securitized-credit-investing-themes.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 161,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/can-stock-market-rally-continue.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 162,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2021-midyear-fixed-income-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 163,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2021-midyear-fixed-income-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 164,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/investment-lessons-40-years-china.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 165,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/investment-lessons-40-years-china.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 166,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/investment-lessons-40-years-china.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 167,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/investment-lessons-40-years-china.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 168,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/investment-lessons-40-years-china.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 169,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/investment-lessons-40-years-china.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 170,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/5-reasons-to-invest-in-high-yield.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 171,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/air-travel-taking-off.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 172,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/air-travel-taking-off.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 173,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/air-travel-taking-off.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 174,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/air-travel-taking-off.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 175,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/us-avoided-recession-2023-what-comes-next.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 176,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/us-avoided-recession-2023-what-comes-next.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 177,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4ts-municipal-bond-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 178,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-us-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 179,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-us-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 180,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-us-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 181,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-us-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 183,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-us-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 187,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/7-book-ideas-2024.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 188,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/2024-stock-market-outlook.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 189,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/emerging-markets-positive-signs-as-china-slows.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 190,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/artificial-intelligence-what-means-investors.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 191,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/artificial-intelligence-what-means-investors.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 192,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/pent-up-demand.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 193,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-lessons-50-years-bond-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 194,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-lessons-50-years-bond-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 195,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/fed-update-jan-2024.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 196,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/medical-miracle-health-care-innovation-saves-world.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 197,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/is-spike-commodity-prices-sustainable.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 198,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/is-spike-commodity-prices-sustainable.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 199,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/is-spike-commodity-prices-sustainable.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 244,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/game-on-future-media.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 245,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/fed-reserve-tapering.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 246,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/fed-reserve-tapering.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 247,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/courage-been-here-before.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 248,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/courage-been-here-before.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 250,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-reasons-no-fear-rising-interest-rates.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 251,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/recession-resilience-muni-bonds-can-help-shield-portfolios.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 252,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/recession-resilience-muni-bonds-can-help-shield-portfolios.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 253,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/recession-resilience-muni-bonds-can-help-shield-portfolios.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 256,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/svb-collapse-changes-fed-calculus.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 257,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/top-5-investment-worries-answered.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 258,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 259,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 260,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 261,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 264,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 265,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/will-pandemic-threaten-future-big-cities.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 266,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/will-pandemic-threaten-future-big-cities.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 267,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/book-american-prometheus.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 268,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-bond-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 269,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-bond-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 270,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-bond-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 271,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-bond-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 273,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/europe-growth-inflation.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 274,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/us-economy-rolling-recession.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 275,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/us-economy-rolling-recession.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 276,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-trends-could-power-industrial-renaissance.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 277,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-trends-could-power-industrial-renaissance.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 278,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-trends-could-power-industrial-renaissance.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 279,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-trends-could-power-industrial-renaissance.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 284,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/china-what-drive-markets-2023.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 285,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/4-things-watch-ahead-us-elections.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 286,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/2022-midyear-international-outlook.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 287,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/2022-midyear-international-outlook.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 288,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/guide-to-recessions.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 46,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/high-income-muni-themes-2024.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 47,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-book-ideas-capital-investment-team.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 48,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-book-ideas-capital-investment-team.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 51,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/ai-tech-mega-cycle.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 52,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/midterm-election-whats-at-stake.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 53,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/midterm-election-whats-at-stake.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 54,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/fed-pauses-what-next-inflation-rates.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 55,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2021-midyear-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 56,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2021-midyear-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 57,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 58,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 59,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 60,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 62,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 63,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-ways-prepare-down-markets.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 64,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-ways-prepare-down-markets.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 65,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-ways-prepare-down-markets.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 66,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/international-equity-strong-dollar.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 67,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/tdf-litigation.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 68,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/tdf-litigation.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 69,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/how-survived-23-market-shocks-35-years-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 70,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/how-survived-23-market-shocks-35-years-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 71,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rob-lovelace-all-weather-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 72,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rob-lovelace-all-weather-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 73,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rob-lovelace-all-weather-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 75,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/end-era-easy-money.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 76,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/end-era-easy-money.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 77,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/end-era-easy-money.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 79,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/end-era-easy-money.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 80,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/world-markets-2q.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 81,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/why-fed-behind-curve.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 82,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/why-fed-behind-curve.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 83,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/why-fed-behind-curve.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 108,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/clean-energy-tailwinds.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 110,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/commercial-real-estate-risk-cmbs.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 111,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/5-predictions-future-media.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 112,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/portfolio-makeover-midyear-2021.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 113,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/portfolio-makeover-midyear-2021.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 114,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/debt-ceiling-showdown-should-investors-worry.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 115,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/debt-ceiling-showdown-should-investors-worry.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 116,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/debt-ceiling-showdown-should-investors-worry.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 117,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/debt-ceiling-showdown-should-investors-worry.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 120,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/why-fed-behind-curve.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 121,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/why-fed-behind-curve.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 122,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/why-fed-behind-curve.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 123,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/can-tips-help-portfolio-high-inflation.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 124,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/can-tips-help-portfolio-high-inflation.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 125,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/can-tips-help-portfolio-high-inflation.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 126,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/policy-priorities-emerge-new-us-leadership.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 127,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/policy-priorities-emerge-new-us-leadership.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 128,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-high-income-investment-strategies-high-rate-world.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 129,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-high-income-investment-strategies-high-rate-world.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 130,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/reshoring-supply-chains-what-means-investors.html?sm_og_es_4806347304",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 131,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2021-midyear-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 132,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2021-midyear-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 133,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/fed-june-2023-meeting-outcomes.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 134,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/russia-ukraine-conflict-threatens-global-economy.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 135,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/russia-ukraine-conflict-threatens-global-economy.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 136,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 137,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 138,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 139,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 140,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 141,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 143,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 144,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 145,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 146,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes-2022.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 147,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/fed-inflation-target-could-be-delivered-early.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 148,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/fed-inflation-target-could-be-delivered-early.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 149,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-predictions-Congress-tax-budget-plans.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 150,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-predictions-Congress-tax-budget-plans.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 151,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-predictions-Congress-tax-budget-plans.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 155,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/dividend-rotation-inflation.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 344,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/when-will-bear-market-end.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 346,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/when-will-bear-market-end.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 347,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/midterm-elections-markets-5-charts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 348,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/midterm-elections-markets-5-charts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 349,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/midterm-elections-markets-5-charts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 350,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/midterm-elections-markets-5-charts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 355,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/why-macroeconomic-predictions-misleading.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 356,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/why-macroeconomic-predictions-misleading.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 358,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rate-hikes-near-end-historic-investor-opportunity-may-begin.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 359,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rate-hikes-near-end-historic-investor-opportunity-may-begin.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 361,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/how-talk-clients-about-bitcoin.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 362,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/how-talk-clients-about-bitcoin.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 363,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/guide-market-recoveries.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 365,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/guide-market-recoveries.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 366,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-bond-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 367,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-bond-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 368,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-bond-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 369,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-bond-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 370,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-bond-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 371,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-bond-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 372,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/dividend-growth-special-sauce-long-term-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 373,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/dividend-growth-special-sauce-long-term-investing.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 374,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/economy-2023-differ-from-market-consensus.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 375,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/beyond-faangs-tech-savvy-companies.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 376,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/beyond-faangs-tech-savvy-companies.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 377,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-market-trends-5-charts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 378,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-market-trends-5-charts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 379,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/fed-keeps-up-inflation-fight.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 380,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/fed-march-2023-rate-outlook.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 381,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/6-books-summer-reading.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 382,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/emerging-market-debt-outlook.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 383,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/value-growth-both.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 384,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-fixed-income-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 385,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-fixed-income-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 386,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-fixed-income-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 289,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/inflation-pricing-power.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 290,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/inflation-pricing-power.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 291,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/inflation-pricing-power.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 292,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/inflation-pricing-power.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 295,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/beyond-risk-return.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 296,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/reshoring-supply-chains-what-means-investors.html?sm_og_es_3663850804",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 297,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/us-midterm-elections-will-house-flip.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 298,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/us-midterm-elections-will-house-flip.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 299,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/us-midterm-elections-will-house-flip.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 301,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-midyear-bond-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 302,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/reinvested-dividends-interactive-chart.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 303,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/reinvested-dividends-interactive-chart.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 306,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/multinational-multilocal-trade.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 307,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/multinational-multilocal-trade.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 308,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/multinational-multilocal-trade.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 309,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/multinational-multilocal-trade.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 310,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-midyear-stock-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 311,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-midyear-stock-market-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 312,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/what-right-with-world.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 313,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/soft-landing-emerging-markets-debt.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 314,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/reshoring-supply-chains-what-means-investors.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 316,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/reshoring-supply-chains-what-means-investors.html",
+      "audience_track": "content"
+    },
+    {
+      "source": "train",
+      "postId": 318,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 319,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 320,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 321,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-us-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 324,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/new-reality-investors-5-major-shifts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 325,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/new-reality-investors-5-major-shifts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 326,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/new-reality-investors-5-major-shifts.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 330,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/higher-r-star-implication-rates-fed-policy.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 331,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investing-lessons-2008-apply-today.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 203,
+      "url": "https://www.capitalgroup.com/advisor/insights/podcast/aerospace-equities-podcast.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 204,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/dare-to-be-different.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 205,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2022-midyear-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 210,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/5-investing-mistakes-avoid.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 211,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/4-things-watch-ahead-us-elections.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 212,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rising-yields-put-bond-markets-back-road-normal.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 213,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rising-yields-put-bond-markets-back-road-normal.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 214,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/rising-yields-put-bond-markets-back-road-normal.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 215,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/labor-market-fed.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 216,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/us-government-debt-we-need-talk.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 217,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/us-government-debt-we-need-talk.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 218,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/is-us-already-in-recession.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 219,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/is-us-already-in-recession.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 220,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/is-us-already-in-recession.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 224,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 225,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 226,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 227,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-international-outlook.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 232,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/what-right-with-world.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 233,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-reasons-60-40-portfolios-comeback.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 234,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-reasons-60-40-portfolios-comeback.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 236,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-reasons-60-40-portfolios-comeback.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 237,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-reasons-60-40-portfolios-comeback.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 239,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/future-of-biotech.html",
+      "audience_track": "institutional"
+    },
+    {
+      "source": "train",
+      "postId": 241,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/game-on-future-media.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 242,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/game-on-future-media.html",
+      "audience_track": "advisor"
+    },
+    {
+      "source": "train",
+      "postId": 243,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/game-on-future-media.html",
+      "audience_track": "advisor"
+    }
+  ],
+  "test": [
+    {
+      "source": "test",
+      "postId": 0,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2024-economic-outlook.html",
+      "audience_track": "advisor",
+      "title": "Economic outlook: A mixed picture for global growth in 2024"
+    },
+    {
+      "source": "test",
+      "postId": 90,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/cloud-software-turbulence.html",
+      "audience_track": "advisor",
+      "title": "Storm cloud: Look past turbulence in software stocks"
+    },
+    {
+      "source": "test",
+      "postId": 91,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/ir-retirement-peace-of-mind.html",
+      "audience_track": "advisor",
+      "title": "Understand what gives clients peace of mind in retirement"
+    },
+    {
+      "source": "test",
+      "postId": 93,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/investing-income-rates-rise.html",
+      "audience_track": "advisor",
+      "title": "Investing for income as rates rise"
+    },
+    {
+      "source": "test",
+      "postId": 96,
+      "url": "https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/reshoring-supply-chains-what-means-investors.html?sm_og_es_5812660283",
+      "audience_track": "content",
+      "title": "Reshoring supply chains: What does it mean for investors?"
+    },
+    {
+      "source": "test",
+      "postId": 97,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/market-volatility-long-term-opportunity.html",
+      "audience_track": "institutional",
+      "title": "Is there opportunity in this stock market volatility?"
+    },
+    {
+      "source": "test",
+      "postId": 99,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/why-next-economic-recovery-may-be-stronger-than-expected.html",
+      "audience_track": "advisor",
+      "title": "Why the next economic recovery may be stronger than expected"
+    },
+    {
+      "source": "test",
+      "postId": 104,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2023-midyear-economic-outlook.html",
+      "audience_track": "advisor",
+      "title": "Economic outlook: Mild recession, strong recovery"
+    },
+    {
+      "source": "test",
+      "postId": 105,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/core-bond-themes-2024.html",
+      "audience_track": "advisor",
+      "title": "Now may be the time for core bonds: Five themes for 2024"
+    },
+    {
+      "source": "test",
+      "postId": 107,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/3-views-russia-ukraine-conflict.html",
+      "audience_track": "advisor",
+      "title": "3 views on the Russia-Ukraine conflict"
+    },
+    {
+      "source": "test",
+      "postId": 332,
+      "url": "https://www.capitalgroup.com/institutional/insights/articles/5-things-know-semiconductors.html",
+      "audience_track": "institutional",
+      "title": "5 things to know about the future of semiconductors"
+    },
+    {
+      "source": "test",
+      "postId": 334,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/diversification-not-dead-bonds-poised-offer-balance.html",
+      "audience_track": "advisor",
+      "title": "Diversification isn't dead: Bonds poised to offer balance"
+    },
+    {
+      "source": "test",
+      "postId": 340,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/labor-market-fed.html",
+      "audience_track": "advisor",
+      "title": "Help wanted: How a distorted job market may foil the Fed"
+    },
+    {
+      "source": "test",
+      "postId": 342,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/2024-bond-outlook.html",
+      "audience_track": "advisor",
+      "title": "Bond outlook: End of historic Fed hikes ushers in optimism"
+    },
+    {
+      "source": "test",
+      "postId": 392,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/10-investment-themes.html",
+      "audience_track": "advisor",
+      "title": "10 investment themes for 2023"
+    },
+    {
+      "source": "test",
+      "postId": 394,
+      "url": "https://www.capitalgroup.com/advisor/insights/articles/5-investment-lessons-pandemic.html",
+      "audience_track": "advisor",
+      "title": "5 investment lessons from the pandemic"
+    }
+  ]
+}
