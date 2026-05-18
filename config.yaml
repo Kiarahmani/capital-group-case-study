@@ -1,0 +1,31 @@
+# Model defaults — override via CLI flags
+models:
+  generation: claude-sonnet-4-6
+  judge: claude-sonnet-4-6
+  embedding: voyage-3.5
+
+# Generation defaults
+generation:
+  variants_per_article: 4        # brief asks for 3-5
+  retrieval_k: 8                 # nearest train posts to include as examples
+  temperature: 0.7
+  max_tokens: 400                # train posts cap at ~412 chars; give some headroom
+
+# Audience tracks — used for stratified retrieval
+audience_tracks:
+  advisor: "advisor/insights"
+  institutional: "institutional/insights"
+  content: "content/capital-group"
+
+# Variant flavor tags — round-robin assigned across variants when --flavors is set
+# Default behavior (no flavors flag): rely purely on in-context examples, no flavor steering
+flavors:
+  question_hook: "Opens with a question that surfaces the article's core tension."
+  stat_lead: "Opens with a specific number or percentage drawn from the article."
+  contrarian: "Frames the article's finding as counter to conventional wisdom."
+  theme_summary: "Declarative one-line thesis summarizing the article."
+  narrative: "Story-style opener — anecdote, scenario, or moment."
+  data_point: "Leads with a single specific finding or insight from the article."
+
+# Disclosure links — populated by pregen extraction step. LLM may include if --include-disclosure flag set.
+disclosure_links: []
