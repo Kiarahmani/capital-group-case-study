@@ -10,6 +10,7 @@ generation:
   retrieval_k: 8                 # nearest train posts to include as examples
   temperature: 0.7
   max_tokens: 400                # train posts cap at ~412 chars; give some headroom
+  length_hint: "roughly 100-300 chars"   # injected into system prompt; corpus median is 216
 
 # Audience tracks — used for stratified retrieval
 audience_tracks:

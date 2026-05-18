@@ -24,6 +24,9 @@ dev = [
     "ruff>=0.15.13",
 ]
 
+[project.scripts]
+capgroup-gen = "capgroup.cli:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
