@@ -7,6 +7,10 @@ __pycache__/
 .ruff_cache/
 .ipynb_checkpoints/
 
+# OS cruft
+.DS_Store
+**/.DS_Store
+
 # Virtual environments
 .venv/
 venv/
