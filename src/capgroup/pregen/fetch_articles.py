@@ -17,6 +17,7 @@ Source strategy per article:
 
 import json
 import re
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -26,7 +27,10 @@ import pandas as pd
 import requests
 import trafilatura
 import yaml
-from tqdm import tqdm
+
+
+def log(msg: str) -> None:
+    print(msg, flush=True, file=sys.stderr)
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CONFIG_PATH = REPO_ROOT / "config.yaml"
@@ -36,10 +40,10 @@ CACHE_DIR = REPO_ROOT / "data" / "cache" / "articles"
 INDEX_PATH = CACHE_DIR / "_index.json"
 
 USER_AGENT = "Mozilla/5.0 (compatible; CapGroupCaseStudy/1.0; +case study research)"
-TIMEOUT_SECONDS = 30
-CDX_TIMEOUT_SECONDS = 20
-MAX_RETRIES = 2
-RETRY_BACKOFF_SECONDS = 2.0
+TIMEOUT_SECONDS = 15
+CDX_TIMEOUT_SECONDS = 8
+MAX_RETRIES = 1
+RETRY_BACKOFF_SECONDS = 1.5
 INTER_REQUEST_SLEEP_SECONDS = 1.5
 MIN_BODY_CHARS = 200
 SHORT_BODY_THRESHOLD = 200
@@ -248,32 +252,30 @@ def try_source(url: str) -> tuple[int | None, str | None, str | None]:
 def fetch_one(post_id: int, url: str, tracks: dict[str, str]) -> dict:
     track = extract_track(url, tracks)
     stripped = strip_query(url)
+    t0 = time.monotonic()
 
-    # Track URL is what we picked-via-track lookup on (uses the original URL
-    # so capitalgroup's /advisor/ /institutional/ /content/ segments all map).
-    # Canonical URL only set if we had to canonicalize to find snapshots.
-
-    # Step 1: CDX on the original (query-stripped) URL.
+    log(f"  postId={post_id} querying CDX...")
     cdx_rows = cdx_query(stripped)
     time.sleep(INTER_REQUEST_SLEEP_SECONDS)
     snapshot = pick_snapshot(cdx_rows)
     canonical_url: str | None = None
 
-    # Step 2: If nothing usable and URL is AEM-internal, canonicalize and retry.
     if snapshot is None:
         canonical_candidate = canonicalize_aem_url(stripped)
         if canonical_candidate is not None:
             canonical_url = canonical_candidate
+            log(f"  postId={post_id} retrying CDX with canonicalized URL...")
             cdx_rows = cdx_query(canonical_candidate)
             time.sleep(INTER_REQUEST_SLEEP_SECONDS)
             snapshot = pick_snapshot(cdx_rows)
 
-    # Step 3: Fetch the chosen snapshot.
     wb_status: int | None = None
     if snapshot is not None:
         snap_url = wayback_snapshot_url(snapshot["timestamp"], snapshot["original"])
+        log(f"  postId={post_id} fetching snapshot {snapshot['timestamp']}...")
         wb_status, wb_body, wb_title = try_source(snap_url)
         if wb_status == 200 and body_looks_real(wb_body):
+            log(f"  postId={post_id} ok via wayback in {time.monotonic()-t0:.1f}s")
             return _record(
                 post_id=post_id,
                 url=url,
@@ -288,10 +290,11 @@ def fetch_one(post_id: int, url: str, tracks: dict[str, str]) -> dict:
             )
         time.sleep(INTER_REQUEST_SLEEP_SECONDS)
 
-    # Step 4: Live URL fallback. Use canonical if we derived one, else original.
     live_target = canonical_url or url
+    log(f"  postId={post_id} trying live URL...")
     live_status, live_body, live_title = try_source(live_target)
     if live_status == 200 and body_looks_real(live_body):
+        log(f"  postId={post_id} ok via live in {time.monotonic()-t0:.1f}s")
         return _record(
             post_id=post_id,
             url=url,
@@ -305,7 +308,7 @@ def fetch_one(post_id: int, url: str, tracks: dict[str, str]) -> dict:
             wayback_timestamp=None,
         )
 
-    # Step 5: slug-title fallback.
+    log(f"  postId={post_id} fallback to slug-title in {time.monotonic()-t0:.1f}s")
     return _record(
         post_id=post_id,
         url=url,
@@ -365,7 +368,8 @@ def main() -> None:
     ok_count = 0
     fallback_count = 0
 
-    for i, (post_id, url) in enumerate(tqdm(pairs, desc="fetch", unit="article")):
+    for i, (post_id, url) in enumerate(pairs):
+        log(f"[{i+1}/{len(pairs)}] postId={post_id}")
         record = fetch_one(post_id, url, tracks)
         out_path = CACHE_DIR / f"{post_id}.json"
         with out_path.open("w") as f:
@@ -376,17 +380,12 @@ def main() -> None:
         else:
             fallback_count += 1
 
-        if record["fetch_status"] == "ok" and record["char_count"] < SHORT_BODY_THRESHOLD:
-            print(
-                f"postId={post_id} source={record['source']} status=ok "
-                f"http={record['http_status']} chars={record['char_count']} (short body)"
-            )
-        else:
-            print(
-                f"postId={post_id} source={record['source']} "
-                f"status={record['fetch_status']} http={record['http_status']} "
-                f"chars={record['char_count']}"
-            )
+        short = record["fetch_status"] == "ok" and record["char_count"] < SHORT_BODY_THRESHOLD
+        log(
+            f"  → postId={post_id} source={record['source']} "
+            f"status={record['fetch_status']} chars={record['char_count']}"
+            f"{' (short body)' if short else ''}"
+        )
 
         summary = {
             "postId": record["postId"],
@@ -414,7 +413,7 @@ def main() -> None:
     with INDEX_PATH.open("w") as f:
         json.dump(index, f, indent=2)
 
-    print(f"fetched: ok={ok_count} fallback={fallback_count}")
+    log(f"fetched: ok={ok_count} fallback={fallback_count}")
 
 
 if __name__ == "__main__":
