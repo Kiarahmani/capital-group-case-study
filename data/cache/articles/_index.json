@@ -1,103 +1,119 @@
 {
-  "fetched_at": "2026-05-18T19:35:49Z",
+  "fetched_at": "2026-05-18T19:50:05Z",
   "total": 16,
-  "ok": 1,
-  "fallback": 15,
+  "ok": 14,
+  "fallback": 2,
   "articles": [
     {
       "postId": 342,
+      "source": "fallback",
       "fetch_status": "fallback",
       "char_count": 0,
       "audience_track": "advisor"
     },
     {
       "postId": 332,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 10308,
       "audience_track": "institutional"
     },
     {
       "postId": 392,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 23949,
       "audience_track": "advisor"
     },
     {
       "postId": 334,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 831,
       "audience_track": "advisor"
     },
     {
       "postId": 104,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 5237,
       "audience_track": "advisor"
     },
     {
       "postId": 105,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 19115,
       "audience_track": "advisor"
     },
     {
       "postId": 107,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 6747,
       "audience_track": "advisor"
     },
     {
       "postId": 340,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 9123,
       "audience_track": "advisor"
     },
     {
       "postId": 394,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 11909,
       "audience_track": "advisor"
     },
     {
       "postId": 97,
+      "source": "wayback",
       "fetch_status": "ok",
-      "char_count": 10296,
+      "char_count": 10324,
       "audience_track": "institutional"
     },
     {
       "postId": 96,
+      "source": "fallback",
       "fetch_status": "fallback",
       "char_count": 0,
       "audience_track": "content"
     },
     {
       "postId": 90,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 1454,
       "audience_track": "advisor"
     },
     {
       "postId": 99,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 722,
       "audience_track": "advisor"
     },
     {
       "postId": 0,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 1210,
       "audience_track": "advisor"
     },
     {
       "postId": 91,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 6192,
       "audience_track": "advisor"
     },
     {
       "postId": 93,
-      "fetch_status": "fallback",
-      "char_count": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 704,
       "audience_track": "advisor"
     }
   ]

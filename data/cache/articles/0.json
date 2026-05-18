@@ -1,11 +1,12 @@
 {
   "postId": 0,
   "url": "https://www.capitalgroup.com/advisor/insights/articles/2024-economic-outlook.html",
-  "fetched_at": "2026-05-18T19:35:47Z",
-  "fetch_status": "fallback",
+  "source": "wayback",
+  "fetched_at": "2026-05-18T19:50:00Z",
+  "fetch_status": "ok",
   "http_status": 200,
-  "title": "2024 Economic Outlook",
-  "body": "",
-  "char_count": 0,
+  "title": "Economic outlook: A mixed picture for global growth in 2024",
+  "body": "History has favored patient investors in election years\n2024 will be a pivotal election year, not only in the United States but in many other countries, including India, Russia, South Africa, Taiwan and the U.K. Globally speaking, it could be one of the most impactful election years in history.\nThe U.S. presidential election will take center stage. And while it is still nearly a year away, investors may be feeling anxious about how markets will react to a potentially volatile campaign season and the possibility of a close vote, not unlike the 2020 election.\n\u201cSeveral key issues will certainly be top of mind for voters, including international policy, the impact of inflation and numerous key social issues,\" says Capital Group political economist Matt Miller. \u201cBut a lot can change between now and November. That\u2019s a lifetime in politics.\u201d\nAlthough markets can be volatile in election years, for long-term investors the political party that wins the White House has had little impact on returns. Since 1936, the 10-year annualized return of U.S. stocks (as measured by the S&P 500 Index) made at the start of an election year was 11.2% when a Democrat won and 10.5% in years when a Republican prevailed.",
+  "char_count": 1210,
   "audience_track": "advisor"
 }

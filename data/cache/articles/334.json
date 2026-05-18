@@ -1,11 +1,12 @@
 {
   "postId": 334,
   "url": "https://www.capitalgroup.com/advisor/insights/articles/diversification-not-dead-bonds-poised-offer-balance.html",
-  "fetched_at": "2026-05-18T19:35:39Z",
-  "fetch_status": "fallback",
+  "source": "wayback",
+  "fetched_at": "2026-05-18T19:49:26Z",
+  "fetch_status": "ok",
   "http_status": 200,
-  "title": "Diversification Not Dead Bonds Poised Offer Balance",
-  "body": "",
-  "char_count": 0,
+  "title": "Diversification isn't dead: Bonds poised to offer balance",
+  "body": "Strong yields and the prospect of a less hawkish Federal Reserve are breathing new life into bond portfolios. Although declining inflation is a reason for optimism after a difficult year, investors can\u2019t be certain just yet if the prolonged market volatility is over.\nThat\u2019s because even if the Fed\u2019s hiking cycle is almost done, the cumulative effect of the aggressive tightening campaign on consumers and businesses remains unclear. Markets expect growth to slow and have penciled in a mild recession in the United States.\nHowever, that picture could change as unemployment and consumer spending data come in. \u201cWe could still be in for a bumpy road, though I don\u2019t see the same level of interest rate volatility for bonds,\u201d says David Hoag, portfolio manager for The Bond Fund of America\u00ae and American Funds\u00ae Strategic Bond Fund.",
+  "char_count": 831,
   "audience_track": "advisor"
 }
