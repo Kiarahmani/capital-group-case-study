@@ -28,4 +28,6 @@ flavors:
   data_point: "Leads with a single specific finding or insight from the article."
 
 # Disclosure links — populated by pregen extraction step. LLM may include if --include-disclosure flag set.
-disclosure_links: []
+disclosure_links:
+  - "https://bit.ly/2JzEDWl"
+  - "https://bit.ly/2JzEDW"
