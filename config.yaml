@@ -1,7 +1,7 @@
 # Model defaults — override via CLI flags
 models:
-  generation: claude-haiku-4-5-20251001
-  judge: claude-haiku-4-5-20251001
+  generation: claude-sonnet-4-6
+  judge: claude-sonnet-4-6
   embedding: voyage-3.5
 
 # Generation defaults
