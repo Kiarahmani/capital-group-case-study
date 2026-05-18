@@ -12,6 +12,47 @@ generation:
   max_tokens: 400                # train posts cap at ~412 chars; give some headroom
   length_hint: "roughly 100-300 chars"   # injected into system prompt; corpus median is 216
 
+# LLM-as-judge quality gate. Hard gates (length + compliance) trigger retries.
+# Soft scores (voice/topic/hook) are reported but never trigger retries.
+judge:
+  enabled: true
+  max_retries: 2
+  length_min: 100        # hard gate; covers vast majority of train corpus
+  length_max: 350        # hard gate; tolerant of slight drift above 300 hint
+  calibration_examples:
+    - post: "Capital Group economists explore where U.S. growth could surprise to the upside in 2024. Three themes to watch in advisor portfolios. https://www.capitalgroup.com/advisor/insights/articles/2024-economic-outlook.html  Important disclosures: https://bit.ly/2JzEDWl"
+      voice_match: 5
+      on_topic: 5
+      hook_strength: 4
+      compliance: pass
+      reasoning: "Hedged language, on-voice for advisor track, URL placement standard, no specific return claims or buy/sell verbs."
+    - post: "Buy SPY now — Capital Group analysts see guaranteed 15% returns this year as the Fed pivots."
+      voice_match: 1
+      on_topic: 2
+      hook_strength: 2
+      compliance: fail
+      compliance_notes: "Contains 'Buy SPY now' (buy verb + ticker) and 'guaranteed 15% returns' (return claim + guarantee language)."
+      reasoning: "Compliance fails on three triggers in one sentence. Voice is also wrong — Capital Group never uses imperative buy/sell."
+    - post: "Why are cloud software stocks down 28.5% over three months? Our equity analyst breaks down the rate-driven repricing and where the long-term thesis still holds. https://www.capitalgroup.com/advisor/insights/articles/cloud-software-turbulence.html"
+      voice_match: 4
+      on_topic: 5
+      hook_strength: 5
+      compliance: pass
+      reasoning: "28.5% is a historical market data point drawn from the article, not a forward return claim. Question hook is strong."
+    - post: "Inflation expected to deliver 4% returns on TIPS this year — investors should sell long-duration treasuries immediately."
+      voice_match: 1
+      on_topic: 2
+      hook_strength: 2
+      compliance: fail
+      compliance_notes: "'Expected to deliver 4% returns' is a forward return claim. 'Sell long-duration treasuries' is a sell verb directed at investors."
+      reasoning: "Two distinct compliance triggers. Tone is also off-voice."
+    - post: "Reshoring isn't deglobalization — it's a rewiring. Our analysts explore what shifting supply chains mean for portfolio construction. https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/reshoring-supply-chains-what-means-investors.html"
+      voice_match: 5
+      on_topic: 5
+      hook_strength: 4
+      compliance: pass
+      reasoning: "Contrarian framing matches the article. Compliant. URL is the full content-path form which is consistent with content-track convention."
+
 # Audience tracks — used for stratified retrieval
 audience_tracks:
   advisor: "advisor/insights"

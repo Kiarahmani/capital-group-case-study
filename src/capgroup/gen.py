@@ -3,6 +3,7 @@
 import json
 import os
 import time
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -12,6 +13,7 @@ import pandas as pd
 import yaml
 from dotenv import load_dotenv
 
+from capgroup.judge import JudgeResult, LengthCheck, check_length, judge_post
 from capgroup.retrieval import Retriever
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -58,8 +60,13 @@ def build_user_blocks(
     flavor: Optional[dict],
     include_disclosure: bool,
     disclosure_url: Optional[str],
+    retry_feedback: Optional[str] = None,
 ) -> list[dict]:
-    """Build user content blocks. Cache breakpoint on the large reusable section."""
+    """Build user content blocks. Cache breakpoint on the large reusable section.
+
+    The retry_feedback parameter, when set, is appended to the uncached delta only —
+    keeping the cached chunk identical across retries of the same post.
+    """
     body = article["body"] or article.get("title", "")
     if max_article_chars and len(body) > max_article_chars:
         body = body[:max_article_chars] + "..."
@@ -86,6 +93,11 @@ Body:
         instructions.append(f"Style direction: {flavor['description']}")
     if include_disclosure and disclosure_url:
         instructions.append(DISCLOSURE_INSTRUCTION.format(url=disclosure_url))
+    if retry_feedback:
+        instructions.append(
+            f"Important: a previous attempt failed quality checks. Issue: {retry_feedback} "
+            f"Produce a new post that addresses this issue."
+        )
     delta_text = "\n\n".join(instructions)
 
     return [
@@ -141,6 +153,130 @@ def select_flavors(n_variants: int, flavors_pool: Optional[list[dict]]) -> list[
     return [flavors_pool[i % len(flavors_pool)] for i in range(n_variants)]
 
 
+@dataclass
+class QualityGateResult:
+    """Bundled outcome of generate → judge → retry."""
+    post: str
+    raw_response: str
+    length: LengthCheck
+    judgment: JudgeResult
+    attempts: list[dict]
+    flagged: bool
+    retries_used: int
+    gen_usage_total: dict
+    judge_usage_total: dict
+
+
+def _empty_usage() -> dict:
+    return {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+    }
+
+
+def _accumulate_usage(acc: dict, delta: dict) -> None:
+    for k in acc:
+        acc[k] += delta.get(k, 0)
+
+
+def generate_with_quality_gate(
+    client: anthropic.Anthropic,
+    gen_model: str,
+    judge_model: str,
+    system_prompt: str,
+    article: dict,
+    examples: list[dict],
+    calibration_examples: list[dict],
+    max_article_chars: Optional[int],
+    flavor: Optional[dict],
+    include_disclosure: bool,
+    disclosure_url: Optional[str],
+    temperature: float,
+    max_tokens: int,
+    length_min: int,
+    length_max: int,
+    max_retries: int,
+) -> QualityGateResult:
+    """Gen → length check → judge → retry on hard-gate failure. Returns best attempt."""
+    attempts: list[dict] = []
+    retry_feedback: Optional[str] = None
+    gen_usage = _empty_usage()
+    judge_usage = _empty_usage()
+
+    for attempt_idx in range(max_retries + 1):
+        user_blocks = build_user_blocks(
+            article=article,
+            examples=examples,
+            max_article_chars=max_article_chars,
+            flavor=flavor,
+            include_disclosure=include_disclosure,
+            disclosure_url=disclosure_url,
+            retry_feedback=retry_feedback,
+        )
+        gen_result = generate_one(
+            client, gen_model, system_prompt, user_blocks, temperature, max_tokens
+        )
+        post = gen_result["generated_post"]
+        length_result = check_length(post, length_min, length_max)
+        judgment = judge_post(
+            client, judge_model, article, examples, calibration_examples, post
+        )
+
+        _accumulate_usage(gen_usage, gen_result["usage"])
+        _accumulate_usage(judge_usage, judgment.usage)
+
+        attempts.append({
+            "attempt": attempt_idx + 1,
+            "post": post,
+            "length": length_result,
+            "judgment": judgment,
+            "raw_response": gen_result["raw_response"],
+            "retry_feedback_used": retry_feedback,
+        })
+
+        if length_result.in_envelope and judgment.compliance == "pass":
+            return QualityGateResult(
+                post=post,
+                raw_response=gen_result["raw_response"],
+                length=length_result,
+                judgment=judgment,
+                attempts=attempts,
+                flagged=False,
+                retries_used=attempt_idx,
+                gen_usage_total=gen_usage,
+                judge_usage_total=judge_usage,
+            )
+
+        feedback_parts = []
+        if not length_result.in_envelope:
+            feedback_parts.append(length_result.feedback)
+        if judgment.compliance == "fail":
+            feedback_parts.append(f"Compliance issue: {judgment.compliance_notes}")
+        retry_feedback = " ".join(feedback_parts)
+
+    def score_attempt(a):
+        return (
+            int(a["length"].in_envelope),
+            int(a["judgment"].compliance == "pass"),
+            a["judgment"].soft_score_sum,
+        )
+
+    best = max(attempts, key=score_attempt)
+    return QualityGateResult(
+        post=best["post"],
+        raw_response=best["raw_response"],
+        length=best["length"],
+        judgment=best["judgment"],
+        attempts=attempts,
+        flagged=True,
+        retries_used=max_retries,
+        gen_usage_total=gen_usage,
+        judge_usage_total=judge_usage,
+    )
+
+
 def resolve_flavor_pool(flavor_names: Optional[list[str]], config: dict) -> Optional[list[dict]]:
     if not flavor_names:
         return None
@@ -159,14 +295,27 @@ def run_generation(
     retrieval_k: int,
     temperature: float,
     output_prefix: Path,
+    use_judge: bool = True,
+    max_judge_retries: Optional[int] = None,
+    length_min: Optional[int] = None,
+    length_max: Optional[int] = None,
+    judge_model: Optional[str] = None,
 ) -> tuple[list[dict], list[dict]]:
     load_dotenv(ENV_PATH)
     config = load_config()
 
-    model = model or config["models"]["generation"]
+    gen_model = model or config["models"]["generation"]
+    judge_model = judge_model or config["models"]["judge"]
     length_hint = config["generation"]["length_hint"]
     max_tokens = config["generation"]["max_tokens"]
     disclosure_url = config["disclosure_links"][0] if config.get("disclosure_links") else None
+
+    judge_cfg = config.get("judge", {})
+    judge_enabled = use_judge and judge_cfg.get("enabled", True)
+    max_retries = max_judge_retries if max_judge_retries is not None else judge_cfg.get("max_retries", 2)
+    length_min_eff = length_min if length_min is not None else judge_cfg.get("length_min", 100)
+    length_max_eff = length_max if length_max is not None else judge_cfg.get("length_max", 350)
+    calibration_examples = judge_cfg.get("calibration_examples", [])
 
     if include_disclosure and not disclosure_url:
         raise ValueError("include_disclosure set but config.yaml has no disclosure_links")
@@ -180,6 +329,9 @@ def run_generation(
     rows: list[dict] = []
     trace: list[dict] = []
 
+    print(f"Judge: {'ENABLED' if judge_enabled else 'DISABLED'} "
+          f"(max_retries={max_retries}, length={length_min_eff}-{length_max_eff})")
+
     for post_id in post_ids:
         article = load_article(post_id)
         examples = retriever.retrieve(post_id, k=retrieval_k, same_track_only=True, dedupe_by_url=True)
@@ -190,49 +342,115 @@ def run_generation(
         print(f"    retrieved {len(examples)} examples (top sim: {top_sim})")
 
         for variant_idx, flavor in enumerate(flavors_for_variants, start=1):
-            user_blocks = build_user_blocks(
-                article=article,
-                examples=examples,
-                max_article_chars=max_article_chars,
-                flavor=flavor,
-                include_disclosure=include_disclosure,
-                disclosure_url=disclosure_url,
-            )
-            result = generate_one(client, model, system_prompt, user_blocks, temperature, max_tokens)
-
             flavor_name = flavor["name"] if flavor else ""
-            row = {
-                "postId": post_id,
-                "variantId": variant_idx,
-                "flavor": flavor_name,
-                "audienceTrack": article["audience_track"],
-                "articleUrl": article["url"],
-                "generatedPost": result["generated_post"],
-            }
-            rows.append(row)
 
-            u = result["usage"]
-            if u["cache_read_input_tokens"]:
-                cache_tag = f"READ({u['cache_read_input_tokens']})"
-            elif u["cache_creation_input_tokens"]:
-                cache_tag = f"WRITE({u['cache_creation_input_tokens']})"
+            if judge_enabled:
+                qg = generate_with_quality_gate(
+                    client=client,
+                    gen_model=gen_model,
+                    judge_model=judge_model,
+                    system_prompt=system_prompt,
+                    article=article,
+                    examples=examples,
+                    calibration_examples=calibration_examples,
+                    max_article_chars=max_article_chars,
+                    flavor=flavor,
+                    include_disclosure=include_disclosure,
+                    disclosure_url=disclosure_url,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    length_min=length_min_eff,
+                    length_max=length_max_eff,
+                    max_retries=max_retries,
+                )
+                post_text = qg.post
+                j = qg.judgment
+                row = {
+                    "postId": post_id,
+                    "variantId": variant_idx,
+                    "flavor": flavor_name,
+                    "audienceTrack": article["audience_track"],
+                    "articleUrl": article["url"],
+                    "generatedPost": post_text,
+                    "voiceMatch": j.voice_match,
+                    "onTopic": j.on_topic,
+                    "hookStrength": j.hook_strength,
+                    "compliance": j.compliance,
+                    "complianceNotes": j.compliance_notes,
+                    "lengthChars": qg.length.char_count,
+                    "judgeRetries": qg.retries_used,
+                    "judgeFlagged": qg.flagged,
+                }
+                rows.append(row)
+                print(
+                    f"    v{variant_idx} flavor={flavor_name or '-':<14} "
+                    f"chars={qg.length.char_count:>4} retries={qg.retries_used} "
+                    f"compl={j.compliance} voice/topic/hook={j.voice_match}/{j.on_topic}/{j.hook_strength}"
+                    f"{' FLAGGED' if qg.flagged else ''}"
+                )
+                trace.append({
+                    **row,
+                    "model": gen_model,
+                    "judgeModel": judge_model,
+                    "retrievedPostIds": [e["train_post_id"] for e in examples],
+                    "retrievedSimilarities": [e["similarity"] for e in examples],
+                    "genUsage": qg.gen_usage_total,
+                    "judgeUsage": qg.judge_usage_total,
+                    "judgeNotes": j.overall_notes,
+                    "attempts": [
+                        {
+                            "attempt": a["attempt"],
+                            "post": a["post"],
+                            "length_in_envelope": a["length"].in_envelope,
+                            "compliance": a["judgment"].compliance,
+                            "compliance_notes": a["judgment"].compliance_notes,
+                            "voice_match": a["judgment"].voice_match,
+                            "on_topic": a["judgment"].on_topic,
+                            "hook_strength": a["judgment"].hook_strength,
+                            "retry_feedback_used": a["retry_feedback_used"],
+                        }
+                        for a in qg.attempts
+                    ],
+                })
             else:
-                cache_tag = "MISS"
-            print(
-                f"    v{variant_idx} flavor={flavor_name or '-':<14} "
-                f"chars={len(result['generated_post']):>4} {cache_tag:<14} "
-                f"in/out={u['input_tokens']}/{u['output_tokens']} ({result['latency_ms']}ms)"
-            )
-
-            trace.append({
-                **row,
-                "model": model,
-                "raw_response": result["raw_response"],
-                "retrieved_post_ids": [e["train_post_id"] for e in examples],
-                "retrieved_similarities": [e["similarity"] for e in examples],
-                "usage": u,
-                "latency_ms": result["latency_ms"],
-            })
+                user_blocks = build_user_blocks(
+                    article=article,
+                    examples=examples,
+                    max_article_chars=max_article_chars,
+                    flavor=flavor,
+                    include_disclosure=include_disclosure,
+                    disclosure_url=disclosure_url,
+                )
+                result = generate_one(client, gen_model, system_prompt, user_blocks, temperature, max_tokens)
+                row = {
+                    "postId": post_id,
+                    "variantId": variant_idx,
+                    "flavor": flavor_name,
+                    "audienceTrack": article["audience_track"],
+                    "articleUrl": article["url"],
+                    "generatedPost": result["generated_post"],
+                }
+                rows.append(row)
+                u = result["usage"]
+                cache_tag = (
+                    f"READ({u['cache_read_input_tokens']})" if u["cache_read_input_tokens"]
+                    else f"WRITE({u['cache_creation_input_tokens']})" if u["cache_creation_input_tokens"]
+                    else "MISS"
+                )
+                print(
+                    f"    v{variant_idx} flavor={flavor_name or '-':<14} "
+                    f"chars={len(result['generated_post']):>4} {cache_tag:<14} "
+                    f"in/out={u['input_tokens']}/{u['output_tokens']} ({result['latency_ms']}ms)"
+                )
+                trace.append({
+                    **row,
+                    "model": gen_model,
+                    "raw_response": result["raw_response"],
+                    "retrievedPostIds": [e["train_post_id"] for e in examples],
+                    "retrievedSimilarities": [e["similarity"] for e in examples],
+                    "genUsage": u,
+                    "latency_ms": result["latency_ms"],
+                })
 
     output_prefix.parent.mkdir(parents=True, exist_ok=True)
     csv_path = output_prefix.with_name(output_prefix.name + "_posts.csv")
