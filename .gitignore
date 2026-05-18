@@ -33,3 +33,6 @@ outputs/*
 !outputs/style_audit.json
 !outputs/style_audit.md
 !outputs/disclosure_url_audit.md
+!outputs/gen_*_posts.csv
+!outputs/gen_*_posts.xlsx
+!outputs/gen_*_trace.jsonl
