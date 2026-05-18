@@ -1,0 +1,169 @@
+CAPITAL GROUP SOCIAL MEDIA POST GENERATION — CASE STUDY
+Kia Rahmani  |  2026-05-20
+
+PROBLEM
+For each of 16 Capital Group article URLs, draft 3-5 candidate social
+media posts (LinkedIn / X) that a marketing team member can review,
+edit, and publish. The training data is 279 historical (post, article)
+pairs; no labels exist for the test set.
+
+APPROACH
+Two-stage pipeline.
+
+Pre-generation (one-time):
+  - Deterministic style audit of the train corpus (length, hashtag,
+    URL, disclosure-trailer, emoji rates), stratified by audience
+    track. Confirms 0% emoji usage, sharp per-track style differences,
+    one canonical disclosure URL (bit.ly/2JzEDWl, 180 occurrences).
+  - Article body acquisition. Live capitalgroup.com URLs are
+    auth-walled by Akamai; bodies sourced from Wayback Machine
+    snapshots via year-fallback (2024 → 2023 → 2025). 16/16 recovered.
+  - Voyage 3.5 embeddings of 279 train postOriginals (as documents)
+    and 16 test article bodies (as queries). Asymmetric document/query
+    encoding for retrieval quality. URLs and disclosure trailers
+    stripped before embedding to surface topic signal over boilerplate.
+
+Generation (per test article, per variant):
+  - Retrieve top-8 train posts via cosine similarity. Hard filter on
+    audience track (advisor/institutional/content). Dedupe by URL
+    (train has 134 unique URLs across 279 rows, so many paraphrase
+    pairs — dedupe ensures we surface 8 distinct articles, not 8
+    paraphrases of the same one).
+  - Prompt: system constraints (no emojis, no return claims, no
+    buy/sell, no tickers) + retrieved examples + article title/URL/body
+    + per-variant style direction. Cache breakpoints on system and on
+    examples-plus-article block; per-variant delta is uncached.
+  - Variant diversity via round-robin flavor tags: question_hook,
+    stat_lead, contrarian, theme_summary (4 of 6 configured). Each
+    flavor is a one-line style direction injected into the uncached
+    delta.
+  - Inline quality gate: programmatic length check (100-350 chars)
+    plus an LLM judge using Claude tool-use for forced structured
+    output. Judge scores voice/topic/hook (1-5) and compliance
+    (pass/fail) with notes. Hard-gate failure (length or compliance)
+    triggers retry with feedback injected into the uncached delta,
+    max 2 retries; cached chunks preserved across retries.
+  - Judge calibrated via 5 few-shot examples in config covering
+    positive cases and the four compliance trigger types (return
+    claims, buy/sell verbs, guarantees, single-ticker mentions).
+
+FINDINGS
+
+  Held-out evaluation on 10 URLs (7 advisor / 2 institutional /
+  1 content, biased toward URLs with 3+ paraphrase pairs in the train
+  corpus). For each held-out URL, removed all paraphrases from the
+  retrieval pool, generated 4 variants using slug-title query +
+  remaining train as examples, compared against the URL's real-post
+  cluster.
+
+  Embedding similarity (cosine in Voyage 3.5 space):
+    - gen vs best-real (avg across 40 gen posts):  0.814
+    - inter-human ceiling (avg pairwise cosine
+      within multi-paraphrase clusters):           0.811
+    - Gap:                                          -0.003
+
+  Generated posts land at the inter-human ceiling. The pipeline
+  produces posts as similar to a real Capital Group post as Capital
+  Group's own writers' posts are to each other. Per-cluster signal is
+  mixed — on some URLs we sit above ceiling (possible mode collapse
+  to a common safe template), on others below (humans more cohesive).
+  Aggregated: parity.
+
+  Judge scores (Claude Sonnet 4.6 judge applied to both):
+    - voice_match:           gen 4.67   vs   real 3.80    gap +0.88
+    - on_topic:              gen 4.17   vs   real 3.14    gap +1.03
+    - hook_strength:         gen 3.67   vs   real 2.97    gap +0.70
+    - compliance failures:   gen 0/40   vs   real 2/35
+
+  Generated posts score above the human reference on all three soft
+  rubrics. Three honest interpretations:
+
+    (1) Judge bias. The judge sees the same retrieved examples the
+        generator used. It may reward gen for matching them.
+
+    (2) Human variance. Real corpus posts span the full quality range
+        (in the eval slice, some real posts score 2/1/1 on this
+        rubric). Generated posts cluster tighter and safer. Two of
+        the 35 held-out real posts even fail compliance per the same
+        judge — the corpus average is not uniformly strong.
+
+    (3) Genuine pipeline quality. Possibly the pipeline produces more
+        consistent marketing copy than the human corpus average,
+        because it combines a tuned system prompt + retrieved
+        exemplars + compliance gate + flavor diversity in one pass.
+
+  All three are partly true. The strongest defensible read: the
+  pipeline produces posts that are statistically indistinguishable
+  from the human corpus on embedding similarity, and judged at or
+  above the human baseline by a Sonnet evaluator on voice / topic /
+  hook quality, with a perfect compliance record.
+
+  Submission run quality gate behavior (16 articles × 4 variants
+  with --flavors all, Claude Sonnet 4.6):
+    - Posts produced:                 64
+    - Compliance failures (final):    0/64
+    - Compliance failures (any
+      attempt across 67 calls):       0
+    - Length envelope adherence:      64/64 in 100-350 chars
+                                      (range 147-342, median 261)
+    - Retries triggered:              2/64 (resolved on attempt 2)
+    - Posts flagged out of budget:    0/64
+    - Cache hit rate on judge calls:  16/16 articles engaged
+                                      (Sonnet's 1024-token minimum
+                                      vs Haiku's 2048)
+    - Total cost (gen + judge):       $0.75
+
+LIMITATIONS
+  - Article body sourced from Wayback, not live API. Capital Group
+    auth-walled the article corpus since the case study was authored;
+    in production this is solved with an internal API or
+    session-cookie passthrough.
+  - Institutional track is sparse (34 train posts vs 231 advisor).
+    Retrieval signal for institutional articles weaker (top similarity
+    ~0.5 vs ~0.7 on advisor). No cross-track fallback in v1.
+  - Eval uses slug-title only (no body) for held-out URL queries.
+    Judge's on_topic score for both gen and real posts is computed
+    without article-body context, so the absolute on_topic number is
+    less informative than the gen-vs-real gap.
+  - Judge bias risk: the judge sees the same retrieval examples that
+    gen used. May over-reward gen for matching those examples. The
+    favorable gen-vs-real judge gap should be read with this caveat.
+    Mitigation deferred (would require an independent example set or
+    different model).
+  - No URL shortener for the bit.ly convention dominant in advisor
+    posts (74% of advisor train posts use bit.ly). Generated posts
+    use the full capitalgroup.com URL. Cosmetic.
+  - Post-hoc regex sanity grep on the final output confirmed: 0
+    return-claim patterns, 0 buy/sell verbs, 0 guarantee language,
+    0 ticker mentions across all 64 generated variants.
+
+WHAT I'D DO WITH MORE TIME
+  - HyDE-style query expansion for held-out / sparse-track retrieval.
+    Use the LLM to synthesize an ideal hypothetical post for the
+    article, embed that, retrieve. Better matching when the query
+    is short or stylistically out-of-distribution.
+  - Cross-track retrieval fallback for sparse tracks: if institutional
+    top-k similarity falls below threshold, augment with advisor
+    posts and mark them as cross-track in the prompt.
+  - Judge debiasing: re-judge with a different retrieval pool, or
+    swap in a different frontier model (GPT-5, Gemini 2.5) as the
+    judge. Tests whether the gen-favors gap survives independent
+    evaluation.
+  - Live A/B in the marketing workflow: ship a small batch to the
+    team, measure approve/edit/reject rates vs the existing process.
+
+STACK
+  Python 3.11, uv. Claude Sonnet 4.6 (gen + judge, with prompt
+  caching, tool-use for judge structured output). Voyage 3.5
+  embeddings (document/query asymmetric). trafilatura (article
+  extraction), pandas, typer, openpyxl. Repo:
+  github.com/[username]/capital-group-case-study.
+
+OUTPUT BUNDLE
+  - posts.csv / posts.xlsx — long-format: postId, variantId, flavor,
+    audienceTrack, articleUrl, generatedPost, voiceMatch, onTopic,
+    hookStrength, compliance, complianceNotes, lengthChars,
+    judgeRetries, judgeFlagged.
+  - trace.jsonl — per-call provenance: retrieved example postIds and
+    similarities, all retry attempts with judge notes, token usage.
+  - eval.csv / eval_summary.md — held-out evaluation findings.
