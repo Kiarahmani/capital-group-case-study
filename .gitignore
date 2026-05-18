@@ -24,3 +24,4 @@ outputs/*
 !outputs/.gitkeep
 !outputs/style_audit.json
 !outputs/style_audit.md
+!outputs/disclosure_url_audit.md
