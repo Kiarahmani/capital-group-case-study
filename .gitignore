@@ -36,3 +36,5 @@ outputs/*
 !outputs/gen_*_posts.csv
 !outputs/gen_*_posts.xlsx
 !outputs/gen_*_trace.jsonl
+!outputs/eval_*.csv
+!outputs/eval_*.md

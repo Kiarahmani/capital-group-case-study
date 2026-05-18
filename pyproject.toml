@@ -26,6 +26,7 @@ dev = [
 
 [project.scripts]
 capgroup-gen = "capgroup.cli:main"
+capgroup-eval = "capgroup.eval.cli:main"
 
 [build-system]
 requires = ["hatchling"]

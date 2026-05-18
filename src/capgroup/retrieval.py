@@ -3,6 +3,7 @@
 import json
 import re
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -50,16 +51,38 @@ class Retriever:
         k: int = 8,
         same_track_only: bool = True,
         dedupe_by_url: bool = True,
+        exclude_urls: Optional[set[str]] = None,
     ) -> list[dict]:
         test_idx = self.test_idx_by_postid[test_post_id]
-        query_vec = self.test_norm[test_idx]
-        test_meta = self.meta["test"][test_idx]
+        return self.retrieve_by_vector(
+            query_vec=self.test_norm[test_idx],
+            query_track=self.meta["test"][test_idx]["audience_track"],
+            k=k,
+            same_track_only=same_track_only,
+            dedupe_by_url=dedupe_by_url,
+            exclude_urls=exclude_urls,
+        )
 
-        sims = self.train_norm @ query_vec
+    def retrieve_by_vector(
+        self,
+        query_vec: np.ndarray,
+        query_track: str,
+        k: int = 8,
+        same_track_only: bool = True,
+        dedupe_by_url: bool = True,
+        exclude_urls: Optional[set[str]] = None,
+    ) -> list[dict]:
+        """Lower-level retrieval against an arbitrary query vector + track."""
+        # Ensure query is normalized
+        q = query_vec / np.linalg.norm(query_vec)
+        sims = self.train_norm @ q
+        exclude_urls = exclude_urls or set()
 
         candidates = []
         for i, train_meta in enumerate(self.meta["train"]):
-            if same_track_only and train_meta["audience_track"] != test_meta["audience_track"]:
+            if same_track_only and train_meta["audience_track"] != query_track:
+                continue
+            if train_meta["url"] in exclude_urls:
                 continue
             candidates.append((float(sims[i]), i, train_meta))
         candidates.sort(key=lambda x: -x[0])
