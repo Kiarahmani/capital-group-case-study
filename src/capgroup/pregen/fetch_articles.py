@@ -1,15 +1,15 @@
 """Fetch and cache article HTML bodies for the 16 test posts.
 
 Source strategy per article:
-  A. Wayback Machine snapshot, selected via the CDX API. We enumerate
-     all 200-status snapshots, filter out small responses (auth walls /
-     redirects), and pick the earliest remaining one — earliest is most
-     likely pre-deprecation / pre-authwall.
+  A. Wayback Machine via direct /web/<year>/<url> redirect. Try year prefixes
+     in order (2024, 2023, 2025) — the first snapshot Wayback redirects us to
+     that yields a real article body wins. We avoid the CDX search API because
+     it is aggressively rate-limited.
 
-     If CDX returns nothing AND the URL is the AEM-internal form
-     (/content/capital-group/us/en/<segment>/home/insights/articles/...),
-     canonicalize it to the user-facing form
-     (/<segment>/insights/articles/...) and retry CDX.
+     If all year prefixes return auth-wall / no-body AND the URL is the
+     AEM-internal form (/content/capital-group/us/en/<segment>/home/insights/
+     articles/...), canonicalize it to the user-facing form
+     (/<segment>/insights/articles/...) and retry the year-fallback.
   B. Live capitalgroup.com URL (fallback — kept in case Capital Group
      un-deprecates).
   C. Slug-derived title with empty body (last resort).
@@ -32,6 +32,7 @@ import yaml
 def log(msg: str) -> None:
     print(msg, flush=True, file=sys.stderr)
 
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CONFIG_PATH = REPO_ROOT / "config.yaml"
 TEST_PATH = REPO_ROOT / "data" / "inputs" / "test.xlsx"
@@ -41,27 +42,22 @@ INDEX_PATH = CACHE_DIR / "_index.json"
 
 USER_AGENT = "Mozilla/5.0 (compatible; CapGroupCaseStudy/1.0; +case study research)"
 TIMEOUT_SECONDS = 15
-CDX_TIMEOUT_SECONDS = 8
 MAX_RETRIES = 1
 RETRY_BACKOFF_SECONDS = 1.5
 INTER_REQUEST_SLEEP_SECONDS = 1.5
 MIN_BODY_CHARS = 200
 SHORT_BODY_THRESHOLD = 200
 
-# CDX snapshot selection thresholds.
-CDX_API = "https://web.archive.org/cdx/search/cdx"
-CDX_MIN_LENGTH = 10000  # bytes; smaller responses are usually auth walls
+# Wayback /web/<year>/<url> year prefixes tried in order. First snapshot that
+# yields a real body wins. Articles span 2022-2024 vintage; 2023 snapshots are
+# most reliably pre-authwall.
+WAYBACK_YEARS = ("2024", "2023", "2025")
 
-# AEM-internal URL pattern. Capital Group's AEM author paths look like
-# /content/capital-group/us/en/<segment>/home/insights/articles/<rest>
-# and the user-facing equivalent is /<segment>/insights/articles/<rest>.
 AEM_PATTERN = re.compile(
     r"^https?://www\.capitalgroup\.com"
     r"/content/capital-group/us/en/([^/]+)/home/insights/articles/(.+)$"
 )
 
-# Strings that indicate the Wayback snapshot itself failed or that the
-# extracted text is Wayback chrome rather than article body.
 WAYBACK_FAILURE_MARKERS = (
     "wayback-toolbar",
     "Internet Archive",
@@ -96,10 +92,6 @@ def strip_query(url: str) -> str:
 
 
 def canonicalize_aem_url(url: str) -> str | None:
-    """If `url` is the AEM-internal form, return the user-facing equivalent.
-
-    Returns None if the URL doesn't match the AEM pattern.
-    """
     match = AEM_PATTERN.match(strip_query(url))
     if match is None:
         return None
@@ -131,93 +123,6 @@ def http_get(url: str, timeout: int = TIMEOUT_SECONDS) -> requests.Response:
     raise RuntimeError("http_get reached an unreachable state")
 
 
-def cdx_query(url: str) -> list[dict]:
-    """Query the Wayback CDX API for 200-status snapshots of `url`.
-
-    Returns a list of dicts with keys: timestamp, original, length.
-    Returns [] on any failure or if no rows match.
-    """
-    params = {
-        "url": url,
-        "output": "json",
-        "limit": "50",
-        "filter": ["statuscode:200", "!mimetype:warc/revisit"],
-    }
-    try:
-        resp = http_get(
-            _build_cdx_url(params),
-            timeout=CDX_TIMEOUT_SECONDS,
-        )
-    except (requests.Timeout, requests.ConnectionError, requests.RequestException):
-        return []
-    if resp.status_code != 200:
-        return []
-    try:
-        rows = resp.json()
-    except ValueError:
-        return []
-    if not isinstance(rows, list) or len(rows) < 2:
-        return []
-    header, *data_rows = rows
-    # Header is typically ["urlkey","timestamp","original","mimetype","statuscode","digest","length"]
-    try:
-        ts_idx = header.index("timestamp")
-        orig_idx = header.index("original")
-        status_idx = header.index("statuscode")
-        len_idx = header.index("length")
-    except ValueError:
-        return []
-    out: list[dict] = []
-    for row in data_rows:
-        if len(row) <= max(ts_idx, orig_idx, status_idx, len_idx):
-            continue
-        if row[status_idx] != "200":
-            continue
-        try:
-            length = int(row[len_idx])
-        except (ValueError, TypeError):
-            continue
-        out.append({
-            "timestamp": row[ts_idx],
-            "original": row[orig_idx],
-            "length": length,
-        })
-    return out
-
-
-def _build_cdx_url(params: dict) -> str:
-    """Build a CDX URL preserving repeated filter params."""
-    parts: list[str] = []
-    for key, value in params.items():
-        values = value if isinstance(value, list) else [value]
-        for v in values:
-            parts.append(f"{key}={requests.utils.quote(str(v), safe='')}")
-    return f"{CDX_API}?{'&'.join(parts)}"
-
-
-def pick_snapshot(rows: list[dict]) -> dict | None:
-    """Pick the earliest snapshot with length > CDX_MIN_LENGTH.
-
-    Returns None if no row qualifies.
-    """
-    usable = [r for r in rows if r["length"] > CDX_MIN_LENGTH]
-    if not usable:
-        return None
-    return min(usable, key=lambda r: r["timestamp"])
-
-
-def wayback_snapshot_url(timestamp: str, original: str) -> str:
-    return f"https://web.archive.org/web/{timestamp}/{original}"
-
-
-def try_fetch(url: str) -> tuple[int | None, str | None]:
-    try:
-        resp = http_get(url)
-        return resp.status_code, resp.text
-    except (requests.Timeout, requests.ConnectionError, requests.RequestException):
-        return None, None
-
-
 def extract_body_and_title(html: str) -> tuple[str | None, str | None]:
     body = trafilatura.extract(html)
     title: str | None = None
@@ -231,7 +136,6 @@ def extract_body_and_title(html: str) -> tuple[str | None, str | None]:
 
 
 def body_looks_real(body: str | None) -> bool:
-    """True if body is long enough and doesn't look like Wayback chrome."""
     if not body or len(body) < MIN_BODY_CHARS:
         return False
     for marker in WAYBACK_FAILURE_MARKERS:
@@ -240,86 +144,95 @@ def body_looks_real(body: str | None) -> bool:
     return True
 
 
-def try_source(url: str) -> tuple[int | None, str | None, str | None]:
-    """Fetch one URL and extract (http_status, body, title)."""
-    http_status, html = try_fetch(url)
-    if http_status == 200 and html:
-        body, title = extract_body_and_title(html)
-        return http_status, body, title
-    return http_status, None, None
+def try_wayback_year(year: str, original_url: str) -> tuple[int | None, str | None, str | None, str | None]:
+    """Try /web/<year>/<original_url>. Returns (http_status, body, title, final_url).
+
+    `final_url` is the Wayback-redirected snapshot URL (e.g. /web/20240223175438/...)
+    so we can record the actual snapshot timestamp picked by Wayback.
+    """
+    target = f"https://web.archive.org/web/{year}/{original_url}"
+    try:
+        resp = http_get(target)
+    except (requests.Timeout, requests.ConnectionError, requests.RequestException):
+        return None, None, None, None
+    if resp.status_code != 200 or not resp.text:
+        return resp.status_code, None, None, resp.url
+    body, title = extract_body_and_title(resp.text)
+    return resp.status_code, body, title, resp.url
+
+
+def try_live(url: str) -> tuple[int | None, str | None, str | None]:
+    try:
+        resp = http_get(url)
+    except (requests.Timeout, requests.ConnectionError, requests.RequestException):
+        return None, None, None
+    if resp.status_code != 200 or not resp.text:
+        return resp.status_code, None, None
+    body, title = extract_body_and_title(resp.text)
+    return resp.status_code, body, title
 
 
 def fetch_one(post_id: int, url: str, tracks: dict[str, str]) -> dict:
     track = extract_track(url, tracks)
     stripped = strip_query(url)
     t0 = time.monotonic()
-
-    log(f"  postId={post_id} querying CDX...")
-    cdx_rows = cdx_query(stripped)
-    time.sleep(INTER_REQUEST_SLEEP_SECONDS)
-    snapshot = pick_snapshot(cdx_rows)
     canonical_url: str | None = None
+    last_http_status: int | None = None
 
-    if snapshot is None:
-        canonical_candidate = canonicalize_aem_url(stripped)
-        if canonical_candidate is not None:
-            canonical_url = canonical_candidate
-            log(f"  postId={post_id} retrying CDX with canonicalized URL...")
-            cdx_rows = cdx_query(canonical_candidate)
-            time.sleep(INTER_REQUEST_SLEEP_SECONDS)
-            snapshot = pick_snapshot(cdx_rows)
-
-    wb_status: int | None = None
-    if snapshot is not None:
-        snap_url = wayback_snapshot_url(snapshot["timestamp"], snapshot["original"])
-        log(f"  postId={post_id} fetching snapshot {snapshot['timestamp']}...")
-        wb_status, wb_body, wb_title = try_source(snap_url)
-        if wb_status == 200 and body_looks_real(wb_body):
-            log(f"  postId={post_id} ok via wayback in {time.monotonic()-t0:.1f}s")
+    # Step 1: year-fallback against the original (query-stripped) URL.
+    for year in WAYBACK_YEARS:
+        log(f"  postId={post_id} /web/{year}/...")
+        status, body, title, final_url = try_wayback_year(year, stripped)
+        last_http_status = status
+        if status == 200 and body_looks_real(body):
+            log(f"  postId={post_id} ok via wayback year={year} in {time.monotonic()-t0:.1f}s")
             return _record(
-                post_id=post_id,
-                url=url,
-                canonical_url=canonical_url,
-                source="wayback",
-                fetch_status="ok",
-                http_status=wb_status,
-                body=wb_body or "",
-                title=wb_title or slug_to_title(url),
-                track=track,
-                wayback_timestamp=snapshot["timestamp"],
+                post_id=post_id, url=url, canonical_url=None,
+                source="wayback", fetch_status="ok", http_status=status,
+                body=body or "", title=title or slug_to_title(url),
+                track=track, wayback_year=year, wayback_snapshot_url=final_url,
             )
         time.sleep(INTER_REQUEST_SLEEP_SECONDS)
 
+    # Step 2: if URL is AEM-internal, canonicalize and retry year-fallback.
+    canonical_candidate = canonicalize_aem_url(stripped)
+    if canonical_candidate is not None:
+        canonical_url = canonical_candidate
+        for year in WAYBACK_YEARS:
+            log(f"  postId={post_id} canonical /web/{year}/...")
+            status, body, title, final_url = try_wayback_year(year, canonical_candidate)
+            last_http_status = status
+            if status == 200 and body_looks_real(body):
+                log(f"  postId={post_id} ok via canonical wayback year={year} in {time.monotonic()-t0:.1f}s")
+                return _record(
+                    post_id=post_id, url=url, canonical_url=canonical_url,
+                    source="wayback", fetch_status="ok", http_status=status,
+                    body=body or "", title=title or slug_to_title(url),
+                    track=track, wayback_year=year, wayback_snapshot_url=final_url,
+                )
+            time.sleep(INTER_REQUEST_SLEEP_SECONDS)
+
+    # Step 3: live URL fallback (use canonical if we derived one).
     live_target = canonical_url or url
-    log(f"  postId={post_id} trying live URL...")
-    live_status, live_body, live_title = try_source(live_target)
+    log(f"  postId={post_id} live URL...")
+    live_status, live_body, live_title = try_live(live_target)
     if live_status == 200 and body_looks_real(live_body):
         log(f"  postId={post_id} ok via live in {time.monotonic()-t0:.1f}s")
         return _record(
-            post_id=post_id,
-            url=url,
-            canonical_url=canonical_url,
-            source="live",
-            fetch_status="ok",
-            http_status=live_status,
-            body=live_body or "",
-            title=live_title or slug_to_title(url),
-            track=track,
-            wayback_timestamp=None,
+            post_id=post_id, url=url, canonical_url=canonical_url,
+            source="live", fetch_status="ok", http_status=live_status,
+            body=live_body or "", title=live_title or slug_to_title(url),
+            track=track, wayback_year=None, wayback_snapshot_url=None,
         )
 
-    log(f"  postId={post_id} fallback to slug-title in {time.monotonic()-t0:.1f}s")
+    # Step 4: slug-title fallback.
+    log(f"  postId={post_id} fallback in {time.monotonic()-t0:.1f}s")
     return _record(
-        post_id=post_id,
-        url=url,
-        canonical_url=canonical_url,
-        source="fallback",
-        fetch_status="fallback",
-        http_status=wb_status if wb_status is not None else live_status,
-        body="",
-        title=slug_to_title(url),
-        track=track,
-        wayback_timestamp=None,
+        post_id=post_id, url=url, canonical_url=canonical_url,
+        source="fallback", fetch_status="fallback",
+        http_status=live_status if live_status is not None else last_http_status,
+        body="", title=slug_to_title(url),
+        track=track, wayback_year=None, wayback_snapshot_url=None,
     )
 
 
@@ -334,7 +247,8 @@ def _record(
     body: str,
     title: str,
     track: str,
-    wayback_timestamp: str | None,
+    wayback_year: str | None,
+    wayback_snapshot_url: str | None,
 ) -> dict:
     record: dict = {
         "postId": int(post_id),
@@ -352,8 +266,11 @@ def _record(
         "char_count": len(body),
         "audience_track": track,
     })
-    if source == "wayback" and wayback_timestamp is not None:
-        record["wayback_timestamp"] = wayback_timestamp
+    if source == "wayback":
+        if wayback_year is not None:
+            record["wayback_year"] = wayback_year
+        if wayback_snapshot_url is not None:
+            record["wayback_snapshot_url"] = wayback_snapshot_url
     return record
 
 
@@ -394,8 +311,8 @@ def main() -> None:
             "char_count": record["char_count"],
             "audience_track": record["audience_track"],
         }
-        if "wayback_timestamp" in record:
-            summary["wayback_timestamp"] = record["wayback_timestamp"]
+        if "wayback_year" in record:
+            summary["wayback_year"] = record["wayback_year"]
         if "canonical_url" in record:
             summary["canonical_url"] = record["canonical_url"]
         summaries.append(summary)
