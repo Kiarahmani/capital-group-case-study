@@ -1,0 +1,136 @@
+{
+  "fetched_at": "2026-05-18T20:41:38Z",
+  "total": 16,
+  "ok": 16,
+  "fallback": 0,
+  "articles": [
+    {
+      "postId": 342,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 17241,
+      "audience_track": "advisor",
+      "wayback_year": "2023"
+    },
+    {
+      "postId": 332,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 10308,
+      "audience_track": "institutional",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 392,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 23949,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 334,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 831,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 104,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 5237,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 105,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 19115,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 107,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 6747,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 340,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 9123,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 394,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 11909,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 97,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 10324,
+      "audience_track": "institutional",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 96,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 11387,
+      "audience_track": "content",
+      "wayback_year": "2023",
+      "canonical_url": "https://www.capitalgroup.com/advisor/insights/articles/reshoring-supply-chains-what-means-investors.html"
+    },
+    {
+      "postId": 90,
+      "source": "fallback",
+      "fetch_status": "ok",
+      "char_count": 1454,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 99,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 8432,
+      "audience_track": "advisor",
+      "wayback_year": "2023"
+    },
+    {
+      "postId": 0,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 9288,
+      "audience_track": "advisor",
+      "wayback_year": "2023"
+    },
+    {
+      "postId": 91,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 6192,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    },
+    {
+      "postId": 93,
+      "source": "wayback",
+      "fetch_status": "ok",
+      "char_count": 704,
+      "audience_track": "advisor",
+      "wayback_year": "2024"
+    }
+  ]
+}
