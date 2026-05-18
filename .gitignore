@@ -20,6 +20,8 @@ data/inputs/*
 !data/inputs/.gitkeep
 data/cache/*
 !data/cache/.gitkeep
+!data/cache/articles/
+!data/cache/articles/*.json
 outputs/*
 !outputs/.gitkeep
 !outputs/style_audit.json

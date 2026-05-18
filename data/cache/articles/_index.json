@@ -1,0 +1,104 @@
+{
+  "fetched_at": "2026-05-18T19:35:49Z",
+  "total": 16,
+  "ok": 1,
+  "fallback": 15,
+  "articles": [
+    {
+      "postId": 342,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 332,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "institutional"
+    },
+    {
+      "postId": 392,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 334,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 104,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 105,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 107,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 340,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 394,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 97,
+      "fetch_status": "ok",
+      "char_count": 10296,
+      "audience_track": "institutional"
+    },
+    {
+      "postId": 96,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "content"
+    },
+    {
+      "postId": 90,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 99,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 0,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 91,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    },
+    {
+      "postId": 93,
+      "fetch_status": "fallback",
+      "char_count": 0,
+      "audience_track": "advisor"
+    }
+  ]
+}
