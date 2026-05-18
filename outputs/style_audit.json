@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "generated_at": "2026-05-18T19:04:49+00:00",
+    "train_path": "data/inputs/train.xlsx",
+    "train_rows": 279
+  },
+  "overall": {
+    "count": 279,
+    "length": {
+      "min": 86,
+      "max": 412,
+      "median": 216.0,
+      "p25": 179.5,
+      "p75": 260.0
+    },
+    "hashtag": {
+      "presence_rate": 0.5268817204301075,
+      "avg_count_per_post": 0.8960573476702509
+    },
+    "url": {
+      "full_capitalgroup_rate": 0.30824372759856633,
+      "bitly_rate": 0.6881720430107527,
+      "any_url_rate": 0.996415770609319,
+      "no_url_rate": 0.0035842293906810374
+    },
+    "disclosure_trailer_rate": 0.6594982078853047,
+    "emoji_rate": 0.0,
+    "question_mark_rate": 0.3154121863799283,
+    "allcaps_word_rate": 0.053763440860215055
+  },
+  "advisor": {
+    "count": 231,
+    "length": {
+      "min": 86,
+      "max": 409,
+      "median": 213.0,
+      "p25": 177.5,
+      "p75": 254.5
+    },
+    "hashtag": {
+      "presence_rate": 0.5757575757575758,
+      "avg_count_per_post": 0.987012987012987
+    },
+    "url": {
+      "full_capitalgroup_rate": 0.2554112554112554,
+      "bitly_rate": 0.7445887445887446,
+      "any_url_rate": 1.0,
+      "no_url_rate": 0.0
+    },
+    "disclosure_trailer_rate": 0.7229437229437229,
+    "emoji_rate": 0.0,
+    "question_mark_rate": 0.31601731601731603,
+    "allcaps_word_rate": 0.05194805194805195
+  },
+  "institutional": {
+    "count": 34,
+    "length": {
+      "min": 139,
+      "max": 412,
+      "median": 259.5,
+      "p25": 196.75,
+      "p75": 298.5
+    },
+    "hashtag": {
+      "presence_rate": 0.23529411764705882,
+      "avg_count_per_post": 0.3235294117647059
+    },
+    "url": {
+      "full_capitalgroup_rate": 0.6176470588235294,
+      "bitly_rate": 0.35294117647058826,
+      "any_url_rate": 0.9705882352941176,
+      "no_url_rate": 0.02941176470588236
+    },
+    "disclosure_trailer_rate": 0.29411764705882354,
+    "emoji_rate": 0.0,
+    "question_mark_rate": 0.20588235294117646,
+    "allcaps_word_rate": 0.058823529411764705
+  },
+  "content": {
+    "count": 14,
+    "length": {
+      "min": 135,
+      "max": 287,
+      "median": 224.0,
+      "p25": 182.75,
+      "p75": 255.0
+    },
+    "hashtag": {
+      "presence_rate": 0.42857142857142855,
+      "avg_count_per_post": 0.7857142857142857
+    },
+    "url": {
+      "full_capitalgroup_rate": 0.42857142857142855,
+      "bitly_rate": 0.5714285714285714,
+      "any_url_rate": 1.0,
+      "no_url_rate": 0.0
+    },
+    "disclosure_trailer_rate": 0.5,
+    "emoji_rate": 0.0,
+    "question_mark_rate": 0.5714285714285714,
+    "allcaps_word_rate": 0.07142857142857142
+  }
+}

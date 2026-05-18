@@ -22,3 +22,5 @@ data/cache/*
 !data/cache/.gitkeep
 outputs/*
 !outputs/.gitkeep
+!outputs/style_audit.json
+!outputs/style_audit.md
