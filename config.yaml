@@ -30,4 +30,3 @@ flavors:
 # Disclosure links — populated by pregen extraction step. LLM may include if --include-disclosure flag set.
 disclosure_links:
   - "https://bit.ly/2JzEDWl"
-  - "https://bit.ly/2JzEDW"
