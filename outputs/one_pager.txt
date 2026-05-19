@@ -46,11 +46,15 @@ Generation (RAG, per test article, per variant):
     The system prompt and the examples-plus-article block sit behind
     a cache breakpoint and are reused across the N variants for the
     same article; only the small per-variant instruction (style
-    direction or retry feedback) sits outside the cache, so each
-    variant reuses ~95% of input tokens at the cached rate.
+    direction or retry feedback) sits outside the cache, so the bulk
+    of input tokens is served from cache reads at ~10× discount.
   - Variant diversity via round-robin flavor tags (e.g., question_hook,
     stat_lead, contrarian, theme_summary). Each
     flavor is a one-line style direction.
+  - Disclosure trailer: the canonical bit.ly URL extracted in pre-gen
+    is appended via an opt-in --include-disclosure flag. Off by default
+    and not enabled for this submission; the marketing team can append
+    per their own compliance policy.
   - Inline quality gate: three hard gates plus three soft scores per
     variant. Hard gates trigger retry with targeted feedback:
       (1) Programmatic length check (100-350 chars).
@@ -136,7 +140,7 @@ STACK
 Repo: github.com/Kiarahmani/capital-group-case-study.
 
 OUTPUT BUNDLE
-  - posts.csv / posts.xlsx — long-format: postId, variantId, flavor,
+  - posts.xlsx — long-format: postId, variantId, flavor,
     audienceTrack, articleUrl, generatedPost, voiceMatch, onTopic,
     hookStrength, compliance, complianceNotes, isValidPost,
     isValidPostNotes, lengthChars, judgeRetries, judgeFlagged.
