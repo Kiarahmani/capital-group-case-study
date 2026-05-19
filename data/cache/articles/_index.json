@@ -95,7 +95,7 @@
     },
     {
       "postId": 90,
-      "source": "fallback",
+      "source": "wayback",
       "fetch_status": "ok",
       "char_count": 1454,
       "audience_track": "advisor"
