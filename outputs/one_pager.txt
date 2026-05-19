@@ -117,7 +117,12 @@ LIMITATIONS
   - Article body sourced from Wayback, not live API. Capital Group
     auth-walled the article corpus since the case study was authored;
     in production this is solved with an internal API or
-    session-cookie passthrough.
+    session-cookie passthrough. Wayback is also non-deterministic
+    across runs — the committed article cache pins the specific
+    snapshots used in the submission (each cache file records its
+    source: "wayback:<timestamp>"). The fetch script is idempotent
+    (skip-if-exists; --force to rebuild) so re-running does not
+    corrupt the submission cache.
   - Institutional track is sparse (34 train posts vs 231 advisor).
     Retrieval signal for institutional articles weaker (top similarity
     ~0.5 vs ~0.7 on advisor). No cross-track fallback in v1.

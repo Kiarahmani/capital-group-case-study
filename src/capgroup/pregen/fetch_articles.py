@@ -15,6 +15,7 @@ Source strategy per article:
   C. Slug-derived title with empty body (last resort).
 """
 
+import argparse
 import json
 import re
 import sys
@@ -275,6 +276,21 @@ def _record(
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Fetch and cache article bodies for the 16 test postIds. Wayback "
+            "is non-deterministic; the committed cache pins the snapshots used "
+            "in the submission run. Default behavior is to skip postIds whose "
+            "cache file already exists — pass --force to overwrite."
+        )
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-fetch articles even when a cache file already exists.",
+    )
+    args = parser.parse_args()
+
     tracks = load_tracks()
     df = pd.read_excel(TEST_PATH, sheet_name=TEST_SHEET)
     pairs = [(int(row["postId"]), str(row["URL"])) for _, row in df.iterrows()]
@@ -284,25 +300,35 @@ def main() -> None:
     summaries: list[dict] = []
     ok_count = 0
     fallback_count = 0
+    skipped_count = 0
+    fetched_any = False
 
     for i, (post_id, url) in enumerate(pairs):
         log(f"[{i+1}/{len(pairs)}] postId={post_id}")
-        record = fetch_one(post_id, url, tracks)
         out_path = CACHE_DIR / f"{post_id}.json"
-        with out_path.open("w") as f:
-            json.dump(record, f, indent=2)
+        is_cached = out_path.exists() and not args.force
+
+        if is_cached:
+            with out_path.open() as f:
+                record = json.load(f)
+            skipped_count += 1
+            log(f"  → postId={post_id} SKIP (cache exists; --force to re-fetch)")
+        else:
+            record = fetch_one(post_id, url, tracks)
+            with out_path.open("w") as f:
+                json.dump(record, f, indent=2)
+            fetched_any = True
+            short = record["fetch_status"] == "ok" and record["char_count"] < SHORT_BODY_THRESHOLD
+            log(
+                f"  → postId={post_id} source={record['source']} "
+                f"status={record['fetch_status']} chars={record['char_count']}"
+                f"{' (short body)' if short else ''}"
+            )
 
         if record["fetch_status"] == "ok":
             ok_count += 1
         else:
             fallback_count += 1
-
-        short = record["fetch_status"] == "ok" and record["char_count"] < SHORT_BODY_THRESHOLD
-        log(
-            f"  → postId={post_id} source={record['source']} "
-            f"status={record['fetch_status']} chars={record['char_count']}"
-            f"{' (short body)' if short else ''}"
-        )
 
         summary = {
             "postId": record["postId"],
@@ -317,20 +343,25 @@ def main() -> None:
             summary["canonical_url"] = record["canonical_url"]
         summaries.append(summary)
 
-        if i < len(pairs) - 1:
+        # Only sleep between actual network requests, not between cache reads.
+        if not is_cached and i < len(pairs) - 1:
             time.sleep(INTER_REQUEST_SLEEP_SECONDS)
 
-    index = {
-        "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "total": len(pairs),
-        "ok": ok_count,
-        "fallback": fallback_count,
-        "articles": summaries,
-    }
-    with INDEX_PATH.open("w") as f:
-        json.dump(index, f, indent=2)
+    # Only rewrite the index if we actually fetched anything. Pure skip-all
+    # runs leave the committed _index.json untouched.
+    if fetched_any:
+        index = {
+            "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "total": len(pairs),
+            "ok": ok_count,
+            "fallback": fallback_count,
+            "articles": summaries,
+        }
+        with INDEX_PATH.open("w") as f:
+            json.dump(index, f, indent=2)
 
-    log(f"fetched: ok={ok_count} fallback={fallback_count}")
+    suffix = f" (skipped: {skipped_count})" if skipped_count else ""
+    log(f"fetched: ok={ok_count} fallback={fallback_count}{suffix}")
 
 
 if __name__ == "__main__":
