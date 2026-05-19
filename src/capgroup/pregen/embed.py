@@ -57,14 +57,16 @@ def load_test() -> list[dict]:
             continue
         rec = json.loads(path.read_text())
         text = rec["body"] if rec["body"] else rec.get("title", "")
-        records.append({
-            "source": "test",
-            "postId": rec["postId"],
-            "url": rec["url"],
-            "audience_track": rec["audience_track"],
-            "title": rec.get("title", ""),
-            "text": text,
-        })
+        records.append(
+            {
+                "source": "test",
+                "postId": rec["postId"],
+                "url": rec["url"],
+                "audience_track": rec["audience_track"],
+                "title": rec.get("title", ""),
+                "text": text,
+            }
+        )
     records.sort(key=lambda r: r["postId"])
     return records
 
@@ -74,7 +76,7 @@ def embed_batch(client, texts: list[str], input_type: str, model: str) -> np.nda
     out = []
     for i in range(0, len(texts), BATCH):
         result = client.embed(
-            texts=texts[i:i + BATCH],
+            texts=texts[i : i + BATCH],
             model=model,
             input_type=input_type,
         )

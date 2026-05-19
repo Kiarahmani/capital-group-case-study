@@ -145,7 +145,9 @@ def body_looks_real(body: str | None) -> bool:
     return True
 
 
-def try_wayback_year(year: str, original_url: str) -> tuple[int | None, str | None, str | None, str | None]:
+def try_wayback_year(
+    year: str, original_url: str
+) -> tuple[int | None, str | None, str | None, str | None]:
     """Try /web/<year>/<original_url>. Returns (http_status, body, title, final_url).
 
     `final_url` is the Wayback-redirected snapshot URL (e.g. /web/20240223175438/...)
@@ -206,12 +208,21 @@ def fetch_article_body(
         status, body, title, final_url = try_wayback_year(year, stripped)
         last_http_status = status
         if status == 200 and body_looks_real(body):
-            log(f"  {log_pid} ok via wayback year={year} in {time.monotonic()-t0:.1f}s")
+            log(
+                f"  {log_pid} ok via wayback year={year} in {time.monotonic() - t0:.1f}s"
+            )
             return _record(
-                post_id=post_id, url=url, canonical_url=None,
-                source="wayback", fetch_status="ok", http_status=status,
-                body=body or "", title=title or slug_to_title(url),
-                track=audience_track, wayback_year=year, wayback_snapshot_url=final_url,
+                post_id=post_id,
+                url=url,
+                canonical_url=None,
+                source="wayback",
+                fetch_status="ok",
+                http_status=status,
+                body=body or "",
+                title=title or slug_to_title(url),
+                track=audience_track,
+                wayback_year=year,
+                wayback_snapshot_url=final_url,
             )
         time.sleep(INTER_REQUEST_SLEEP_SECONDS)
 
@@ -224,12 +235,21 @@ def fetch_article_body(
             status, body, title, final_url = try_wayback_year(year, canonical_candidate)
             last_http_status = status
             if status == 200 and body_looks_real(body):
-                log(f"  {log_pid} ok via canonical wayback year={year} in {time.monotonic()-t0:.1f}s")
+                log(
+                    f"  {log_pid} ok via canonical wayback year={year} in {time.monotonic() - t0:.1f}s"
+                )
                 return _record(
-                    post_id=post_id, url=url, canonical_url=canonical_url,
-                    source="wayback", fetch_status="ok", http_status=status,
-                    body=body or "", title=title or slug_to_title(url),
-                    track=audience_track, wayback_year=year, wayback_snapshot_url=final_url,
+                    post_id=post_id,
+                    url=url,
+                    canonical_url=canonical_url,
+                    source="wayback",
+                    fetch_status="ok",
+                    http_status=status,
+                    body=body or "",
+                    title=title or slug_to_title(url),
+                    track=audience_track,
+                    wayback_year=year,
+                    wayback_snapshot_url=final_url,
                 )
             time.sleep(INTER_REQUEST_SLEEP_SECONDS)
 
@@ -238,22 +258,35 @@ def fetch_article_body(
     log(f"  {log_pid} live URL...")
     live_status, live_body, live_title = try_live(live_target)
     if live_status == 200 and body_looks_real(live_body):
-        log(f"  {log_pid} ok via live in {time.monotonic()-t0:.1f}s")
+        log(f"  {log_pid} ok via live in {time.monotonic() - t0:.1f}s")
         return _record(
-            post_id=post_id, url=url, canonical_url=canonical_url,
-            source="live", fetch_status="ok", http_status=live_status,
-            body=live_body or "", title=live_title or slug_to_title(url),
-            track=audience_track, wayback_year=None, wayback_snapshot_url=None,
+            post_id=post_id,
+            url=url,
+            canonical_url=canonical_url,
+            source="live",
+            fetch_status="ok",
+            http_status=live_status,
+            body=live_body or "",
+            title=live_title or slug_to_title(url),
+            track=audience_track,
+            wayback_year=None,
+            wayback_snapshot_url=None,
         )
 
     # Step 4: slug-title fallback.
-    log(f"  {log_pid} fallback in {time.monotonic()-t0:.1f}s")
+    log(f"  {log_pid} fallback in {time.monotonic() - t0:.1f}s")
     return _record(
-        post_id=post_id, url=url, canonical_url=canonical_url,
-        source="fallback", fetch_status="fallback",
+        post_id=post_id,
+        url=url,
+        canonical_url=canonical_url,
+        source="fallback",
+        fetch_status="fallback",
         http_status=live_status if live_status is not None else last_http_status,
-        body="", title=slug_to_title(url),
-        track=audience_track, wayback_year=None, wayback_snapshot_url=None,
+        body="",
+        title=slug_to_title(url),
+        track=audience_track,
+        wayback_year=None,
+        wayback_snapshot_url=None,
     )
 
 
@@ -283,16 +316,18 @@ def _record(
     record["url"] = url
     if canonical_url is not None:
         record["canonical_url"] = canonical_url
-    record.update({
-        "source": source,
-        "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "fetch_status": fetch_status,
-        "http_status": http_status,
-        "title": title,
-        "body": body,
-        "char_count": len(body),
-        "audience_track": track,
-    })
+    record.update(
+        {
+            "source": source,
+            "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "fetch_status": fetch_status,
+            "http_status": http_status,
+            "title": title,
+            "body": body,
+            "char_count": len(body),
+            "audience_track": track,
+        }
+    )
     if source == "wayback":
         if wayback_year is not None:
             record["wayback_year"] = wayback_year
@@ -330,7 +365,7 @@ def main() -> None:
     fetched_any = False
 
     for i, (post_id, url) in enumerate(pairs):
-        log(f"[{i+1}/{len(pairs)}] postId={post_id}")
+        log(f"[{i + 1}/{len(pairs)}] postId={post_id}")
         out_path = CACHE_DIR / f"{post_id}.json"
         is_cached = out_path.exists() and not args.force
 
@@ -344,7 +379,10 @@ def main() -> None:
             with out_path.open("w") as f:
                 json.dump(record, f, indent=2)
             fetched_any = True
-            short = record["fetch_status"] == "ok" and record["char_count"] < SHORT_BODY_THRESHOLD
+            short = (
+                record["fetch_status"] == "ok"
+                and record["char_count"] < SHORT_BODY_THRESHOLD
+            )
             log(
                 f"  → postId={post_id} source={record['source']} "
                 f"status={record['fetch_status']} chars={record['char_count']}"

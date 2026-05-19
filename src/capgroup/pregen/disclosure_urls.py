@@ -64,7 +64,11 @@ def select_canonical(disclosure_counts: Counter) -> tuple[list[str], int, str]:
             f"fell back to {FALLBACK_THRESHOLD}."
         )
         return urls, FALLBACK_THRESHOLD, note
-    return [], DEFAULT_THRESHOLD, "No URL appeared 2+ times in disclosure-trailer posts."
+    return (
+        [],
+        DEFAULT_THRESHOLD,
+        "No URL appeared 2+ times in disclosure-trailer posts.",
+    )
 
 
 def top_n(counter: Counter, n: int) -> list[tuple[str, int]]:

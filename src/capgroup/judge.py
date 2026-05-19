@@ -1,7 +1,7 @@
 """LLM-as-judge for generated posts. Forces structured output via tool-use."""
 
 from dataclasses import dataclass, field
-from typing import Literal, Optional
+from typing import Literal
 
 import anthropic
 
@@ -186,16 +186,16 @@ def build_judge_user_blocks(
 
     cached_text = f"""{CALIBRATION_BLOCK_TEMPLATE.format(examples_text=calibration_text)}
 
-For context, here are real Capital Group posts in the relevant voice (audience track: {article['audience_track']}):
+For context, here are real Capital Group posts in the relevant voice (audience track: {article["audience_track"]}):
 
 {voice_text}
 
 The post is promoting this article:
-Title: {article.get('title', '')}
-URL: {article['url']}
+Title: {article.get("title", "")}
+URL: {article["url"]}
 
 Article body (for grounding the on_topic check):
-{(article.get('body') or article.get('title', ''))[:3000]}"""
+{(article.get("body") or article.get("title", ""))[:3000]}"""
 
     delta_text = f"""Post to judge:
 \"\"\"
@@ -219,7 +219,9 @@ def judge_post(
     post: str,
 ) -> JudgeResult:
     """Single judge call. Forces tool-use for structured output."""
-    user_blocks = build_judge_user_blocks(article, voice_examples, calibration_examples, post)
+    user_blocks = build_judge_user_blocks(
+        article, voice_examples, calibration_examples, post
+    )
 
     response = client.messages.create(
         model=model,
@@ -252,7 +254,11 @@ def judge_post(
         usage={
             "input_tokens": response.usage.input_tokens,
             "output_tokens": response.usage.output_tokens,
-            "cache_creation_input_tokens": getattr(response.usage, "cache_creation_input_tokens", 0),
-            "cache_read_input_tokens": getattr(response.usage, "cache_read_input_tokens", 0),
+            "cache_creation_input_tokens": getattr(
+                response.usage, "cache_creation_input_tokens", 0
+            ),
+            "cache_read_input_tokens": getattr(
+                response.usage, "cache_read_input_tokens", 0
+            ),
         },
     )

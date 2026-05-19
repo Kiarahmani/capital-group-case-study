@@ -93,14 +93,16 @@ class Retriever:
             if dedupe_by_url and m["url"] in seen_urls:
                 continue
             seen_urls.add(m["url"])
-            results.append({
-                "similarity": sim,
-                "train_post_id": m["postId"],
-                "url": m["url"],
-                "audience_track": m["audience_track"],
-                "text_raw": self.train_text_by_postid[m["postId"]],
-                "text_clean": clean_example(self.train_text_by_postid[m["postId"]]),
-            })
+            results.append(
+                {
+                    "similarity": sim,
+                    "train_post_id": m["postId"],
+                    "url": m["url"],
+                    "audience_track": m["audience_track"],
+                    "text_raw": self.train_text_by_postid[m["postId"]],
+                    "text_clean": clean_example(self.train_text_by_postid[m["postId"]]),
+                }
+            )
             if len(results) >= k:
                 break
         return results

@@ -103,17 +103,36 @@ def format_num(x: float) -> str:
 def render_slice_md(name: str, m: dict) -> str:
     if m.get("count", 0) == 0:
         return f"## {name}\n\n(no rows)\n"
-    lines = [f"## {name}", "", f"- count: {m['count']}", "", "| metric | value |", "|---|---|"]
+    lines = [
+        f"## {name}",
+        "",
+        f"- count: {m['count']}",
+        "",
+        "| metric | value |",
+        "|---|---|",
+    ]
     L = m["length"]
-    lines.append(f"| length min / median / max | {format_num(L['min'])} / {format_num(L['median'])} / {format_num(L['max'])} |")
-    lines.append(f"| length p25 / p75 | {format_num(L['p25'])} / {format_num(L['p75'])} |")
-    lines.append(f"| hashtag presence rate | {format_pct(m['hashtag']['presence_rate'])} |")
-    lines.append(f"| hashtag avg count per post | {m['hashtag']['avg_count_per_post']:.2f} |")
-    lines.append(f"| url full capitalgroup.com rate | {format_pct(m['url']['full_capitalgroup_rate'])} |")
+    lines.append(
+        f"| length min / median / max | {format_num(L['min'])} / {format_num(L['median'])} / {format_num(L['max'])} |"
+    )
+    lines.append(
+        f"| length p25 / p75 | {format_num(L['p25'])} / {format_num(L['p75'])} |"
+    )
+    lines.append(
+        f"| hashtag presence rate | {format_pct(m['hashtag']['presence_rate'])} |"
+    )
+    lines.append(
+        f"| hashtag avg count per post | {m['hashtag']['avg_count_per_post']:.2f} |"
+    )
+    lines.append(
+        f"| url full capitalgroup.com rate | {format_pct(m['url']['full_capitalgroup_rate'])} |"
+    )
     lines.append(f"| url bit.ly rate | {format_pct(m['url']['bitly_rate'])} |")
     lines.append(f"| url any-url rate | {format_pct(m['url']['any_url_rate'])} |")
     lines.append(f"| url no-url rate | {format_pct(m['url']['no_url_rate'])} |")
-    lines.append(f"| disclosure trailer rate | {format_pct(m['disclosure_trailer_rate'])} |")
+    lines.append(
+        f"| disclosure trailer rate | {format_pct(m['disclosure_trailer_rate'])} |"
+    )
     lines.append(f"| emoji rate | {format_pct(m['emoji_rate'])} |")
     lines.append(f"| question mark rate | {format_pct(m['question_mark_rate'])} |")
     lines.append(f"| allcaps word rate | {format_pct(m['allcaps_word_rate'])} |")
@@ -122,7 +141,11 @@ def render_slice_md(name: str, m: dict) -> str:
 
 
 def cross_track_differences(slices: dict) -> list[str]:
-    track_names = [t for t in ("advisor", "institutional", "content") if t in slices and slices[t].get("count", 0) > 0]
+    track_names = [
+        t
+        for t in ("advisor", "institutional", "content")
+        if t in slices and slices[t].get("count", 0) > 0
+    ]
     if len(track_names) < 2:
         return []
 
@@ -137,7 +160,10 @@ def cross_track_differences(slices: dict) -> list[str]:
     rate_metrics = [
         ("hashtag presence rate", lambda s: s["hashtag"]["presence_rate"]),
         ("hashtag avg count per post", lambda s: s["hashtag"]["avg_count_per_post"]),
-        ("full capitalgroup.com URL rate", lambda s: s["url"]["full_capitalgroup_rate"]),
+        (
+            "full capitalgroup.com URL rate",
+            lambda s: s["url"]["full_capitalgroup_rate"],
+        ),
         ("bit.ly URL rate", lambda s: s["url"]["bitly_rate"]),
         ("any-URL rate", lambda s: s["url"]["any_url_rate"]),
         ("disclosure trailer rate", lambda s: s["disclosure_trailer_rate"]),
@@ -149,9 +175,13 @@ def cross_track_differences(slices: dict) -> list[str]:
         gap, lo_name, lo, hi_name, hi = spread(getter)
         if label == "hashtag avg count per post":
             if gap > 0.15:
-                notes.append(f"- {label}: {hi_name} {hi:.2f} vs {lo_name} {lo:.2f} (spread {gap:.2f}).")
+                notes.append(
+                    f"- {label}: {hi_name} {hi:.2f} vs {lo_name} {lo:.2f} (spread {gap:.2f})."
+                )
         elif gap > 0.15:
-            notes.append(f"- {label}: {hi_name} {format_pct(hi)} vs {lo_name} {format_pct(lo)} (spread {format_pct(gap)}).")
+            notes.append(
+                f"- {label}: {hi_name} {format_pct(hi)} vs {lo_name} {format_pct(lo)} (spread {format_pct(gap)})."
+            )
 
     for label, getter in [
         ("median length", lambda s: s["length"]["median"]),
@@ -187,11 +217,15 @@ def render_markdown(slices: dict, meta: dict) -> str:
     parts.append("## Notable differences across tracks")
     parts.append("")
     if diffs:
-        parts.append("Thresholds: rate metrics with >15 percentage-point spread, length metrics with >25% spread over the lower value.")
+        parts.append(
+            "Thresholds: rate metrics with >15 percentage-point spread, length metrics with >25% spread over the lower value."
+        )
         parts.append("")
         parts.extend(diffs)
     else:
-        parts.append("No metric crossed the thresholds (>15pp for rates, >25% for length).")
+        parts.append(
+            "No metric crossed the thresholds (>15pp for rates, >25% for length)."
+        )
     parts.append("")
     return "\n".join(parts)
 

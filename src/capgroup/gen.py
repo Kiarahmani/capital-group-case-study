@@ -3,8 +3,7 @@
 import json
 import os
 import time
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
@@ -75,15 +74,15 @@ def build_user_blocks(
         f"<example>\n{ex['text_clean']}\n</example>" for ex in examples
     )
 
-    cached_text = f"""Audience track: {article['audience_track']}
+    cached_text = f"""Audience track: {article["audience_track"]}
 
 Examples of social media posts from this audience track:
 
 {examples_section}
 
 The article you are promoting:
-Title: {article.get('title', '')}
-URL: {article['url']}
+Title: {article.get("title", "")}
+URL: {article["url"]}
 
 Body:
 {body}"""
@@ -111,7 +110,7 @@ def parse_response(text: str) -> str:
     if len(text) >= 2 and text[0] == text[-1] and text[0] in ('"', "'"):
         text = text[1:-1].strip()
     if text.startswith("```"):
-        lines = [l for l in text.split("\n") if not l.startswith("```")]
+        lines = [line for line in text.split("\n") if not line.startswith("```")]
         text = "\n".join(lines).strip()
     return text
 
@@ -129,7 +128,13 @@ def generate_one(
         model=model,
         max_tokens=max_tokens,
         temperature=temperature,
-        system=[{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}],
+        system=[
+            {
+                "type": "text",
+                "text": system_prompt,
+                "cache_control": {"type": "ephemeral"},
+            }
+        ],
         messages=[{"role": "user", "content": user_blocks}],
     )
     latency_ms = int((time.time() - t0) * 1000)
@@ -141,13 +146,19 @@ def generate_one(
         "usage": {
             "input_tokens": response.usage.input_tokens,
             "output_tokens": response.usage.output_tokens,
-            "cache_creation_input_tokens": getattr(response.usage, "cache_creation_input_tokens", 0),
-            "cache_read_input_tokens": getattr(response.usage, "cache_read_input_tokens", 0),
+            "cache_creation_input_tokens": getattr(
+                response.usage, "cache_creation_input_tokens", 0
+            ),
+            "cache_read_input_tokens": getattr(
+                response.usage, "cache_read_input_tokens", 0
+            ),
         },
     }
 
 
-def select_flavors(n_variants: int, flavors_pool: Optional[list[dict]]) -> list[Optional[dict]]:
+def select_flavors(
+    n_variants: int, flavors_pool: Optional[list[dict]]
+) -> list[Optional[dict]]:
     if not flavors_pool:
         return [None] * n_variants
     return [flavors_pool[i % len(flavors_pool)] for i in range(n_variants)]
@@ -156,6 +167,7 @@ def select_flavors(n_variants: int, flavors_pool: Optional[list[dict]]) -> list[
 @dataclass
 class QualityGateResult:
     """Bundled outcome of generate → judge → retry."""
+
     post: str
     raw_response: str
     length: LengthCheck
@@ -227,14 +239,16 @@ def generate_with_quality_gate(
         _accumulate_usage(gen_usage, gen_result["usage"])
         _accumulate_usage(judge_usage, judgment.usage)
 
-        attempts.append({
-            "attempt": attempt_idx + 1,
-            "post": post,
-            "length": length_result,
-            "judgment": judgment,
-            "raw_response": gen_result["raw_response"],
-            "retry_feedback_used": retry_feedback,
-        })
+        attempts.append(
+            {
+                "attempt": attempt_idx + 1,
+                "post": post,
+                "length": length_result,
+                "judgment": judgment,
+                "raw_response": gen_result["raw_response"],
+                "retry_feedback_used": retry_feedback,
+            }
+        )
 
         if (
             length_result.in_envelope
@@ -290,7 +304,9 @@ def generate_with_quality_gate(
     )
 
 
-def resolve_flavor_pool(flavor_names: Optional[list[str]], config: dict) -> Optional[list[dict]]:
+def resolve_flavor_pool(
+    flavor_names: Optional[list[str]], config: dict
+) -> Optional[list[dict]]:
     if not flavor_names:
         return None
     if flavor_names == ["all"]:
@@ -321,17 +337,29 @@ def run_generation(
     judge_model = judge_model or config["models"]["judge"]
     length_hint = config["generation"]["length_hint"]
     max_tokens = config["generation"]["max_tokens"]
-    disclosure_url = config["disclosure_links"][0] if config.get("disclosure_links") else None
+    disclosure_url = (
+        config["disclosure_links"][0] if config.get("disclosure_links") else None
+    )
 
     judge_cfg = config.get("judge", {})
     judge_enabled = use_judge and judge_cfg.get("enabled", True)
-    max_retries = max_judge_retries if max_judge_retries is not None else judge_cfg.get("max_retries", 2)
-    length_min_eff = length_min if length_min is not None else judge_cfg.get("length_min", 100)
-    length_max_eff = length_max if length_max is not None else judge_cfg.get("length_max", 350)
+    max_retries = (
+        max_judge_retries
+        if max_judge_retries is not None
+        else judge_cfg.get("max_retries", 2)
+    )
+    length_min_eff = (
+        length_min if length_min is not None else judge_cfg.get("length_min", 100)
+    )
+    length_max_eff = (
+        length_max if length_max is not None else judge_cfg.get("length_max", 350)
+    )
     calibration_examples = judge_cfg.get("calibration_examples", [])
 
     if include_disclosure and not disclosure_url:
-        raise ValueError("include_disclosure set but config.yaml has no disclosure_links")
+        raise ValueError(
+            "include_disclosure set but config.yaml has no disclosure_links"
+        )
 
     flavors_pool = resolve_flavor_pool(flavor_names, config)
     system_prompt = SYSTEM_PROMPT_TEMPLATE.format(length_hint=length_hint)
@@ -342,12 +370,16 @@ def run_generation(
     rows: list[dict] = []
     trace: list[dict] = []
 
-    print(f"Judge: {'ENABLED' if judge_enabled else 'DISABLED'} "
-          f"(max_retries={max_retries}, length={length_min_eff}-{length_max_eff})")
+    print(
+        f"Judge: {'ENABLED' if judge_enabled else 'DISABLED'} "
+        f"(max_retries={max_retries}, length={length_min_eff}-{length_max_eff})"
+    )
 
     for post_id in post_ids:
         article = load_article(post_id)
-        examples = retriever.retrieve(post_id, k=retrieval_k, same_track_only=True, dedupe_by_url=True)
+        examples = retriever.retrieve(
+            post_id, k=retrieval_k, same_track_only=True, dedupe_by_url=True
+        )
         flavors_for_variants = select_flavors(n_variants, flavors_pool)
 
         top_sim = f"{examples[0]['similarity']:.3f}" if examples else "n/a"
@@ -403,32 +435,36 @@ def run_generation(
                     f"compl={j.compliance} voice/topic/hook={j.voice_match}/{j.on_topic}/{j.hook_strength}"
                     f"{' FLAGGED' if qg.flagged else ''}"
                 )
-                trace.append({
-                    **row,
-                    "model": gen_model,
-                    "judgeModel": judge_model,
-                    "retrievedPostIds": [e["train_post_id"] for e in examples],
-                    "retrievedSimilarities": [e["similarity"] for e in examples],
-                    "genUsage": qg.gen_usage_total,
-                    "judgeUsage": qg.judge_usage_total,
-                    "judgeNotes": j.overall_notes,
-                    "attempts": [
-                        {
-                            "attempt": a["attempt"],
-                            "post": a["post"],
-                            "length_in_envelope": a["length"].in_envelope,
-                            "compliance": a["judgment"].compliance,
-                            "compliance_notes": a["judgment"].compliance_notes,
-                            "is_valid_post": a["judgment"].is_valid_post,
-                            "is_valid_post_notes": a["judgment"].is_valid_post_notes,
-                            "voice_match": a["judgment"].voice_match,
-                            "on_topic": a["judgment"].on_topic,
-                            "hook_strength": a["judgment"].hook_strength,
-                            "retry_feedback_used": a["retry_feedback_used"],
-                        }
-                        for a in qg.attempts
-                    ],
-                })
+                trace.append(
+                    {
+                        **row,
+                        "model": gen_model,
+                        "judgeModel": judge_model,
+                        "retrievedPostIds": [e["train_post_id"] for e in examples],
+                        "retrievedSimilarities": [e["similarity"] for e in examples],
+                        "genUsage": qg.gen_usage_total,
+                        "judgeUsage": qg.judge_usage_total,
+                        "judgeNotes": j.overall_notes,
+                        "attempts": [
+                            {
+                                "attempt": a["attempt"],
+                                "post": a["post"],
+                                "length_in_envelope": a["length"].in_envelope,
+                                "compliance": a["judgment"].compliance,
+                                "compliance_notes": a["judgment"].compliance_notes,
+                                "is_valid_post": a["judgment"].is_valid_post,
+                                "is_valid_post_notes": a[
+                                    "judgment"
+                                ].is_valid_post_notes,
+                                "voice_match": a["judgment"].voice_match,
+                                "on_topic": a["judgment"].on_topic,
+                                "hook_strength": a["judgment"].hook_strength,
+                                "retry_feedback_used": a["retry_feedback_used"],
+                            }
+                            for a in qg.attempts
+                        ],
+                    }
+                )
             else:
                 user_blocks = build_user_blocks(
                     article=article,
@@ -438,7 +474,14 @@ def run_generation(
                     include_disclosure=include_disclosure,
                     disclosure_url=disclosure_url,
                 )
-                result = generate_one(client, gen_model, system_prompt, user_blocks, temperature, max_tokens)
+                result = generate_one(
+                    client,
+                    gen_model,
+                    system_prompt,
+                    user_blocks,
+                    temperature,
+                    max_tokens,
+                )
                 row = {
                     "postId": post_id,
                     "variantId": variant_idx,
@@ -450,8 +493,10 @@ def run_generation(
                 rows.append(row)
                 u = result["usage"]
                 cache_tag = (
-                    f"READ({u['cache_read_input_tokens']})" if u["cache_read_input_tokens"]
-                    else f"WRITE({u['cache_creation_input_tokens']})" if u["cache_creation_input_tokens"]
+                    f"READ({u['cache_read_input_tokens']})"
+                    if u["cache_read_input_tokens"]
+                    else f"WRITE({u['cache_creation_input_tokens']})"
+                    if u["cache_creation_input_tokens"]
                     else "MISS"
                 )
                 print(
@@ -459,15 +504,17 @@ def run_generation(
                     f"chars={len(result['generated_post']):>4} {cache_tag:<14} "
                     f"in/out={u['input_tokens']}/{u['output_tokens']} ({result['latency_ms']}ms)"
                 )
-                trace.append({
-                    **row,
-                    "model": gen_model,
-                    "raw_response": result["raw_response"],
-                    "retrievedPostIds": [e["train_post_id"] for e in examples],
-                    "retrievedSimilarities": [e["similarity"] for e in examples],
-                    "genUsage": u,
-                    "latency_ms": result["latency_ms"],
-                })
+                trace.append(
+                    {
+                        **row,
+                        "model": gen_model,
+                        "raw_response": result["raw_response"],
+                        "retrievedPostIds": [e["train_post_id"] for e in examples],
+                        "retrievedSimilarities": [e["similarity"] for e in examples],
+                        "genUsage": u,
+                        "latency_ms": result["latency_ms"],
+                    }
+                )
 
     output_prefix.parent.mkdir(parents=True, exist_ok=True)
     csv_path = output_prefix.with_name(output_prefix.name + "_posts.csv")
