@@ -25,7 +25,7 @@ uv run capgroup-eval
 
 ### Pre-generation steps (optional — outputs are committed)
 
-The repo ships with pre-generation outputs already in place (`data/cache/articles/*.json`, `data/cache/embeddings.npz`, plus the audit files under `outputs/`). Rebuild only if you've deleted them or want to regenerate from scratch:
+The repo ships with pre-generation outputs already in place (`data/cache/articles/*.json` for the 16 test articles, `data/cache/eval_articles/*.json` for the 10 held-out evaluation articles, `data/cache/embeddings.npz`, plus the audit files under `outputs/`). Rebuild only if you've deleted them or want to regenerate from scratch:
 
 ```bash
 uv run python -m capgroup.pregen.style_audit

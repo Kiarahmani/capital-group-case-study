@@ -12,8 +12,9 @@ generation:
   max_tokens: 400                # train posts cap at ~412 chars; give some headroom
   length_hint: "roughly 100-300 chars"   # injected into system prompt; corpus median is 216
 
-# LLM-as-judge quality gate. Hard gates (length + compliance) trigger retries.
-# Soft scores (voice/topic/hook) are reported but never trigger retries.
+# LLM-as-judge quality gate. Hard gates (length + compliance + is_valid_post)
+# trigger retries. Soft scores (voice/topic/hook) are reported but never
+# trigger retries.
 judge:
   enabled: true
   max_retries: 2

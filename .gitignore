@@ -19,11 +19,12 @@ env/
 # Secrets
 .env
 
-# Data and outputs — keep .gitkeep sentinels, ignore everything else
+# Data and outputs — allow specific committed artifacts, ignore the rest.
+# data/inputs/ is empty in the repo; .gitkeep preserves the dir so users have
+# somewhere to drop train.xlsx and test.xlsx after cloning.
 data/inputs/*
 !data/inputs/.gitkeep
 data/cache/*
-!data/cache/.gitkeep
 !data/cache/articles/
 !data/cache/articles/*.json
 !data/cache/eval_articles/
@@ -31,7 +32,6 @@ data/cache/*
 !data/cache/embeddings.npz
 !data/cache/embeddings_meta.json
 outputs/*
-!outputs/.gitkeep
 !outputs/style_audit.json
 !outputs/style_audit.md
 !outputs/disclosure_url_audit.md
