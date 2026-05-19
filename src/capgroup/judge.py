@@ -1,7 +1,7 @@
 """LLM-as-judge for generated posts. Forces structured output via tool-use."""
 
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Literal, Optional
 
 import anthropic
 
@@ -177,12 +177,22 @@ def build_judge_user_blocks(
     voice_examples: list[dict],
     calibration_examples: list[dict],
     post_to_judge: str,
+    max_article_chars: Optional[int] = None,
 ) -> list[dict]:
-    """Build judge user content. Cache breakpoint on the article + examples block."""
+    """Build judge user content. Cache breakpoint on the article + examples block.
+
+    The article body slice MUST match what the generator saw, otherwise the
+    judge will flag legitimate quotes from late in the article as hallucinations.
+    Pass the same max_article_chars value that gen used; None means full body.
+    """
     voice_text = "\n\n".join(
         f"<example>\n{ex['text_clean']}\n</example>" for ex in voice_examples
     )
     calibration_text = format_calibration_examples(calibration_examples)
+
+    body = article.get("body") or article.get("title", "")
+    if max_article_chars and len(body) > max_article_chars:
+        body = body[:max_article_chars] + "..."
 
     cached_text = f"""{CALIBRATION_BLOCK_TEMPLATE.format(examples_text=calibration_text)}
 
@@ -195,7 +205,7 @@ Title: {article.get("title", "")}
 URL: {article["url"]}
 
 Article body (for grounding the on_topic check):
-{(article.get("body") or article.get("title", ""))[:3000]}"""
+{body}"""
 
     delta_text = f"""Post to judge:
 \"\"\"
@@ -217,10 +227,16 @@ def judge_post(
     voice_examples: list[dict],
     calibration_examples: list[dict],
     post: str,
+    max_article_chars: Optional[int] = None,
 ) -> JudgeResult:
-    """Single judge call. Forces tool-use for structured output."""
+    """Single judge call. Forces tool-use for structured output.
+
+    max_article_chars MUST match what the generator received for this article
+    so the judge grades on_topic against the same view the generator had.
+    """
     user_blocks = build_judge_user_blocks(
-        article, voice_examples, calibration_examples, post
+        article, voice_examples, calibration_examples, post,
+        max_article_chars=max_article_chars,
     )
 
     response = client.messages.create(

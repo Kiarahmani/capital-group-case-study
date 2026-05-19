@@ -375,6 +375,7 @@ def run_holdout_eval(
                 voice_examples=examples,
                 calibration_examples=calibration_examples,
                 post=rp["text_clean"],
+                max_article_chars=None,  # eval uses empty body anyway; explicit for symmetry with gen path
             )
             real_judgments[rp["postId"]] = {
                 "voice_match": j.voice_match,

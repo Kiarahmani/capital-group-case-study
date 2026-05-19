@@ -91,9 +91,9 @@ each generated post is scored against the URL's real-post cluster.
 
   Judge scores (Claude Sonnet 4.6 applied to both gen and real, with
   article body in scope for both):
-    - voice_match:           gen 4.58   vs   real 3.31
-    - on_topic:              gen 4.75   vs   real 3.20
-    - hook_strength:         gen 4.00   vs   real 2.74
+    - voice_match:           gen 4.67   vs   real 3.51
+    - on_topic:              gen 4.88   vs   real 3.49
+    - hook_strength:         gen 3.90   vs   real 2.77
     - compliance failures:   gen 0/40   vs   real 0/35
     - is_valid_post failures: gen 0/40  vs   real 0/35
 
@@ -107,9 +107,9 @@ each generated post is scored against the URL's real-post cluster.
 
   Submission run (16 articles × 4 variants, Claude Sonnet 4.6,
   --flavors all): 64 posts produced, 0 compliance failures, 0
-  is_valid_post failures, all in length envelope (172-344 chars,
-  median 260), 2 retries triggered (both resolved on attempt 2),
-  0 posts flagged out of retry budget. Total cost $0.79. The
+  is_valid_post failures, all in length envelope (142-345 chars,
+  median 265), 2 retries triggered (both resolved on attempt 2),
+  0 posts flagged out of retry budget. Total cost $0.91. The
   is_valid_post gate caught one meta-commentary preamble on the
   submission run that would have passed compliance regex; clean
   post produced on retry.

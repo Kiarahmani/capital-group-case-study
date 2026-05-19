@@ -233,7 +233,8 @@ def generate_with_quality_gate(
         post = gen_result["generated_post"]
         length_result = check_length(post, length_min, length_max)
         judgment = judge_post(
-            client, judge_model, article, examples, calibration_examples, post
+            client, judge_model, article, examples, calibration_examples, post,
+            max_article_chars=max_article_chars,
         )
 
         _accumulate_usage(gen_usage, gen_result["usage"])

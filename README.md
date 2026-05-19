@@ -64,8 +64,8 @@ All tunables in [`config.yaml`](config.yaml) — model defaults, retrieval param
 
 The repo ships with the canonical outputs from one full run:
 
-- [`outputs/gen_20260519T180346Z_trace.jsonl`](outputs/gen_20260519T180346Z_trace.jsonl) — per-call provenance for the canonical run: retrieved example postIds, retry attempts, judge notes, token usage.
-- [`outputs/eval_20260519T172959Z.md`](outputs/eval_20260519T172959Z.md) + [`.csv`](outputs/eval_20260519T172959Z.csv) — held-out evaluation summary and per-post metrics.
+- [`outputs/gen_20260519T202718Z_trace.jsonl`](outputs/gen_20260519T202718Z_trace.jsonl) — per-call provenance for the canonical run: retrieved example postIds, retry attempts, judge notes, token usage.
+- [`outputs/eval_20260519T202719Z.md`](outputs/eval_20260519T202719Z.md) + [`.csv`](outputs/eval_20260519T202719Z.csv) — held-out evaluation summary and per-post metrics.
 - [`outputs/style_audit.md`](outputs/style_audit.md) + `style_audit.json` — deterministic corpus statistics.
 - [`outputs/disclosure_url_audit.md`](outputs/disclosure_url_audit.md) — canonical disclosure URL extraction.
 
