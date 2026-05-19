@@ -52,12 +52,13 @@ Generation (RAG, per test article, per variant):
     stat_lead, contrarian, theme_summary). Each
     flavor is a one-line style direction.
   - Disclosure trailer: the canonical bit.ly URL extracted in pre-gen
-    is appended via an opt-in --include-disclosure flag. Off by default
-    and not enabled for this submission; the marketing team can append
-    per their own compliance policy.
+    is appended via the --include-disclosure flag, enabled for this
+    submission to match the train-corpus convention (66% of train
+    posts carry a disclosure trailer). The URL is configurable in
+    config.yaml per the marketing team's compliance policy.
   - Inline quality gate: three hard gates plus three soft scores per
     variant. Hard gates trigger retry with targeted feedback:
-      (1) Programmatic length check (100-350 chars).
+      (1) Programmatic length check (100-400 chars).
       (2) Compliance check (LLM judge, pass/fail): no specific
           return claims, no buy/sell verbs, no guarantee language,
           no single-ticker mentions.
@@ -110,13 +111,11 @@ each generated post is scored against the URL's real-post cluster.
     outputs/eval_*.md and outputs/eval_*.csv.
 
   Submission run (16 articles × 4 variants, Claude Sonnet 4.6,
-  --flavors all): 64 posts produced, 0 compliance failures, 0
-  is_valid_post failures, all in length envelope (142-345 chars,
-  median 265), 2 retries triggered (both resolved on attempt 2),
-  0 posts flagged out of retry budget. Total cost $0.91. The
-  is_valid_post gate caught one meta-commentary preamble on the
-  submission run that would have passed compliance regex; clean
-  post produced on retry.
+  --flavors all --include-disclosure): 64 posts produced, 0
+  compliance failures, 0 is_valid_post failures, all in length
+  envelope (238-388 chars, median 314), 2 retries triggered (both
+  resolved on attempt 2), 0 posts flagged out of retry budget.
+  Total cost $0.91.
 
 WHAT I'D DO WITH MORE TIME
 Ship a small batch to the marketing team and measure

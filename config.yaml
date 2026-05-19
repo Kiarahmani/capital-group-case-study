@@ -19,7 +19,7 @@ judge:
   enabled: true
   max_retries: 2
   length_min: 100        # hard gate; covers vast majority of train corpus
-  length_max: 350        # hard gate; tolerant of slight drift above 300 hint
+  length_max: 400        # hard gate; train corpus max is 412, this leaves headroom for posts that include the disclosure trailer
   calibration_examples:
     - post: "Capital Group economists explore where U.S. growth could surprise to the upside in 2024. Three themes to watch in advisor portfolios. https://www.capitalgroup.com/advisor/insights/articles/2024-economic-outlook.html  Important disclosures: https://bit.ly/2JzEDWl"
       voice_match: 5
