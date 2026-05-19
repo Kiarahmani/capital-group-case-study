@@ -1,10 +1,6 @@
-# Capital Group — Social Media Post Generation Case Study
+# Capital Group — Social Media Post Generation
 
-Pipeline that generates short social media posts (LinkedIn / X) promoting Capital Group articles, given an article URL. Built for the Capital Group AI Scientist case study, May 2026.
-
-## Writeup
-
-See **[`outputs/one_pager.txt`](outputs/one_pager.txt)** for the full approach, findings, limitations, and what-I'd-do-next.
+A retrieval-augmented pipeline that drafts short social media posts (LinkedIn / X) promoting Capital Group articles. Given a target article URL and a historical corpus of human-written posts, it produces N candidate posts per article, each scored and gated through an LLM-as-judge quality check before being written out.
 
 ## How to run
 
@@ -13,12 +9,12 @@ See **[`outputs/one_pager.txt`](outputs/one_pager.txt)** for the full approach, 
 uv sync
 
 # 2. Set keys
-cp .env.example .env  # then fill in ANTHROPIC_API_KEY and VOYAGE_API_KEY
+cp .env.example .env  # fill in ANTHROPIC_API_KEY and VOYAGE_API_KEY
 
-# 3. Drop the case-study input files into data/inputs/
-#    (train.xlsx, test.xlsx — these are not committed to the repo)
+# 3. Drop the input files into data/inputs/
+#    (train.xlsx and test.xlsx are expected but not committed)
 
-# 4. Generate posts for all 16 test articles, 4 variants each, with flavor tags
+# 4. Generate posts for all test articles, 4 variants each, with flavor tags
 uv run capgroup-gen --flavors all
 # Output: outputs/gen_{timestamp}_posts.csv + .xlsx + _trace.jsonl
 
@@ -29,10 +25,7 @@ uv run capgroup-eval
 
 ### Pre-generation steps (optional — outputs are committed)
 
-The repo ships with the pre-generation outputs already committed
-(`data/cache/articles/*.json`, `data/cache/embeddings.npz`, plus the
-audit files under `outputs/`). You only need to rebuild these if you've
-deleted them or want to regenerate from scratch:
+The repo ships with pre-generation outputs already in place (`data/cache/articles/*.json`, `data/cache/embeddings.npz`, plus the audit files under `outputs/`). Rebuild only if you've deleted them or want to regenerate from scratch:
 
 ```bash
 uv run python -m capgroup.pregen.style_audit
@@ -42,30 +35,8 @@ uv run python -m capgroup.pregen.embed
 ```
 
 Notes:
-- `fetch_articles.py` — Wayback Machine is non-deterministic; the same
-  script can return different snapshots at different times. The committed
-  article cache pins the specific snapshots used in the submission run
-  (each file records its `source: "wayback:<timestamp>"`). The script
-  skips postIds whose cache already exists; pass `--force` to overwrite.
-- `disclosure_urls.py` — frequency-based URL extraction can surface
-  near-duplicate truncation artifacts in the source data. The committed
-  `config.yaml` has been manually deduped to the single canonical URL.
-  The script skips if `disclosure_links` is already populated; pass
-  `--force` to re-extract.
-
-## Engineering evidence (committed to repo)
-
-- **[`outputs/one_pager.txt`](outputs/one_pager.txt)** — the writeup.
-- **[`outputs/eval_20260519T172959Z.md`](outputs/eval_20260519T172959Z.md)** — held-out evaluation summary (gen vs human cluster on cosine + judge rubric).
-- **[`outputs/eval_20260519T172959Z.csv`](outputs/eval_20260519T172959Z.csv)** — per-generated-post metrics from the eval run.
-- **[`outputs/gen_20260519T180346Z_trace.jsonl`](outputs/gen_20260519T180346Z_trace.jsonl)** — per-call provenance for the final Sonnet run: retrieved example postIds, retry attempts, judge notes, token usage.
-- **[`outputs/style_audit.md`](outputs/style_audit.md)** + `style_audit.json` — deterministic corpus statistics.
-- **[`outputs/disclosure_url_audit.md`](outputs/disclosure_url_audit.md)** — canonical disclosure URL extraction.
-
-## Deliverable (ships via email, not the repo)
-
-- `outputs/gen_{timestamp}_posts.csv` / `.xlsx` — the long-format spreadsheet (postId, variantId, flavor, audienceTrack, articleUrl, generatedPost, plus judge columns). Sent as an email attachment.
-- `outputs/one_pager.pdf` — formatted writeup. Email attachment.
+- `fetch_articles.py` — Wayback Machine is non-deterministic; the same script can return different snapshots at different times. The committed article cache pins the specific snapshots used in the canonical run (each file records its `source: "wayback:<timestamp>"`). The script skips postIds whose cache already exists; pass `--force` to overwrite.
+- `disclosure_urls.py` — frequency-based URL extraction can surface near-duplicate truncation artifacts in dirty source data. The committed `config.yaml` has been manually deduped to the single canonical URL. The script skips if `disclosure_links` is already populated; pass `--force` to re-extract.
 
 ## Architecture
 
@@ -85,10 +56,23 @@ src/capgroup/
     └── cli.py                # capgroup-eval entry point
 ```
 
-## Config
+## Configuration
 
 All tunables in [`config.yaml`](config.yaml) — model defaults, retrieval parameters, flavor tag descriptions, judge calibration examples, canonical disclosure URL.
 
+## Sample outputs
+
+The repo ships with the canonical outputs from one full run:
+
+- [`outputs/gen_20260519T180346Z_trace.jsonl`](outputs/gen_20260519T180346Z_trace.jsonl) — per-call provenance for the canonical run: retrieved example postIds, retry attempts, judge notes, token usage.
+- [`outputs/eval_20260519T172959Z.md`](outputs/eval_20260519T172959Z.md) + [`.csv`](outputs/eval_20260519T172959Z.csv) — held-out evaluation summary and per-post metrics.
+- [`outputs/style_audit.md`](outputs/style_audit.md) + `style_audit.json` — deterministic corpus statistics.
+- [`outputs/disclosure_url_audit.md`](outputs/disclosure_url_audit.md) — canonical disclosure URL extraction.
+
+## Design notes
+
+See [`outputs/one_pager.txt`](outputs/one_pager.txt) for the approach, findings, and stack discussion.
+
 ## Stack
 
-Python 3.11 · `uv` · Claude Sonnet 4.6 (Anthropic SDK with prompt caching and tool use) · Voyage 3.5 (asymmetric document/query embeddings) · trafilatura · pandas · typer.
+Python 3.11 · `uv` · Claude Sonnet 4.6 (Anthropic SDK with prompt caching and tool use) · Voyage 3.5 (asymmetric document/query embeddings) · trafilatura · pandas · typer · openpyxl.
