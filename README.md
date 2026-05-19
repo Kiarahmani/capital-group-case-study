@@ -36,17 +36,22 @@ deleted them or want to regenerate from scratch:
 
 ```bash
 uv run python -m capgroup.pregen.style_audit
-uv run python -m capgroup.pregen.disclosure_urls
+uv run python -m capgroup.pregen.disclosure_urls     # skip-if-populated; --force to overwrite
 uv run python -m capgroup.pregen.fetch_articles      # skip-if-exists; --force to rebuild
 uv run python -m capgroup.pregen.embed
 ```
 
-Note on `fetch_articles.py`: Wayback Machine is non-deterministic — the
-same script can return different snapshots at different times. The
-committed article cache pins the specific snapshots used in the
-submission run (each file records its `source: "wayback:<timestamp>"`).
-The script skips postIds whose cache already exists; pass `--force`
-to overwrite.
+Notes:
+- `fetch_articles.py` — Wayback Machine is non-deterministic; the same
+  script can return different snapshots at different times. The committed
+  article cache pins the specific snapshots used in the submission run
+  (each file records its `source: "wayback:<timestamp>"`). The script
+  skips postIds whose cache already exists; pass `--force` to overwrite.
+- `disclosure_urls.py` — frequency-based URL extraction can surface
+  near-duplicate truncation artifacts in the source data. The committed
+  `config.yaml` has been manually deduped to the single canonical URL.
+  The script skips if `disclosure_links` is already populated; pass
+  `--force` to re-extract.
 
 ## Engineering evidence (committed to repo)
 

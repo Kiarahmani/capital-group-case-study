@@ -11,6 +11,7 @@ Method:
 5. Emit a human-readable audit to outputs/disclosure_url_audit.md.
 """
 
+import argparse
 import re
 from collections import Counter
 from datetime import datetime, timezone
@@ -82,6 +83,15 @@ def update_config_yaml(path: Path, urls: list[str]) -> None:
     data["disclosure_links"] = [DoubleQuotedScalarString(u) for u in urls]
     with path.open("w") as f:
         yaml.dump(data, f)
+
+
+def read_existing_disclosure_links(path: Path) -> list[str]:
+    """Read the current disclosure_links from config.yaml, if any."""
+    yaml = YAML()
+    with path.open() as f:
+        data = yaml.load(f)
+    links = data.get("disclosure_links") or []
+    return [str(u) for u in links]
 
 
 def render_audit_md(
@@ -160,6 +170,32 @@ def render_audit_md(
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Extract canonical disclosure URLs from train postOriginal and "
+            "populate config.yaml's disclosure_links field. The threshold-based "
+            "extraction can surface near-duplicate truncation artifacts in the "
+            "source data; the committed config.yaml has been manually deduped. "
+            "Default behavior is to skip writing if disclosure_links is already "
+            "non-empty — pass --force to re-extract and overwrite."
+        )
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-extract and overwrite config.yaml + audit MD even when disclosure_links is already populated.",
+    )
+    args = parser.parse_args()
+
+    existing = read_existing_disclosure_links(CONFIG_PATH)
+    if existing and not args.force:
+        print(
+            f"disclosure_links already populated in config.yaml "
+            f"({len(existing)} URL(s)); skipping extraction. "
+            f"Use --force to re-extract."
+        )
+        return
+
     df = pd.read_excel(TRAIN_PATH, sheet_name=TRAIN_SHEET)
     posts = df["postOriginal"].fillna("").astype(str)
 
