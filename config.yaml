@@ -25,6 +25,7 @@ judge:
       on_topic: 5
       hook_strength: 4
       compliance: pass
+      is_valid_post: pass
       reasoning: "Hedged language, on-voice for advisor track, URL placement standard, no specific return claims or buy/sell verbs."
     - post: "Buy SPY now — Capital Group analysts see guaranteed 15% returns this year as the Fed pivots."
       voice_match: 1
@@ -32,12 +33,14 @@ judge:
       hook_strength: 2
       compliance: fail
       compliance_notes: "Contains 'Buy SPY now' (buy verb + ticker) and 'guaranteed 15% returns' (return claim + guarantee language)."
+      is_valid_post: pass
       reasoning: "Compliance fails on three triggers in one sentence. Voice is also wrong — Capital Group never uses imperative buy/sell."
     - post: "Why are cloud software stocks down 28.5% over three months? Our equity analyst breaks down the rate-driven repricing and where the long-term thesis still holds. https://www.capitalgroup.com/advisor/insights/articles/cloud-software-turbulence.html"
       voice_match: 4
       on_topic: 5
       hook_strength: 5
       compliance: pass
+      is_valid_post: pass
       reasoning: "28.5% is a historical market data point drawn from the article, not a forward return claim. Question hook is strong."
     - post: "Inflation expected to deliver 4% returns on TIPS this year — investors should sell long-duration treasuries immediately."
       voice_match: 1
@@ -45,13 +48,34 @@ judge:
       hook_strength: 2
       compliance: fail
       compliance_notes: "'Expected to deliver 4% returns' is a forward return claim. 'Sell long-duration treasuries' is a sell verb directed at investors."
+      is_valid_post: pass
       reasoning: "Two distinct compliance triggers. Tone is also off-voice."
     - post: "Reshoring isn't deglobalization — it's a rewiring. Our analysts explore what shifting supply chains mean for portfolio construction. https://www.capitalgroup.com/content/capital-group/us/en/advisor/home/insights/articles/reshoring-supply-chains-what-means-investors.html"
       voice_match: 5
       on_topic: 5
       hook_strength: 4
       compliance: pass
+      is_valid_post: pass
       reasoning: "Contrarian framing matches the article. Compliant. URL is the full content-path form which is consistent with content-track convention."
+    - post: |
+        The article body doesn't include specific numbers or percentages to draw from. Here is a post based on the title and URL alone:
+
+        Market volatility can feel unsettling, but history shows it has often created long-term opportunity for patient investors. https://www.capitalgroup.com/advisor/insights/articles/market-volatility-long-term-opportunity.html
+      voice_match: 2
+      on_topic: 2
+      hook_strength: 2
+      compliance: pass
+      is_valid_post: fail
+      is_valid_post_notes: "Begins with operator-directed meta-commentary ('The article body doesn't include...') before the post content. The actual post is buried below the explanation."
+      reasoning: "Compliance technically passes but the output is not a publishable post — it contains a system-to-operator explanation prefacing the actual post. is_valid_post catches this where compliance doesn't."
+    - post: "I don't have enough information from the article to write a specific stat-led post. Please provide the article body so I can draw from real data points."
+      voice_match: 1
+      on_topic: 1
+      hook_strength: 1
+      compliance: pass
+      is_valid_post: fail
+      is_valid_post_notes: "Entire response is operator-directed refusal asking for more information. No post content at all."
+      reasoning: "Pure refusal/meta-text. Not a post."
 
 # Audience tracks — used for stratified retrieval
 audience_tracks:

@@ -173,8 +173,28 @@ def try_live(url: str) -> tuple[int | None, str | None, str | None]:
     return resp.status_code, body, title
 
 
-def fetch_one(post_id: int, url: str, tracks: dict[str, str]) -> dict:
-    track = extract_track(url, tracks)
+def fetch_article_body(
+    url: str,
+    audience_track: str,
+    post_id: int | None = None,
+) -> dict:
+    """Fetch an article body via Wayback year-fallback + trafilatura.
+
+    Returns a record matching the per-article cache schema:
+      postId, url, [canonical_url], source, fetched_at, fetch_status,
+      http_status, title, body, char_count, audience_track,
+      [wayback_year], [wayback_snapshot_url]
+
+    `post_id` is included in the record if provided; otherwise omitted. The
+    caller is responsible for caching the record on disk if desired.
+
+    Strategy (same as the test-article pre-gen pipeline):
+      1. Year-fallback against the original URL via Wayback (/web/<year>/<url>).
+      2. If URL is AEM-internal, canonicalize and retry year-fallback.
+      3. Live URL fallback.
+      4. Slug-title fallback (body="").
+    """
+    log_pid = f"postId={post_id}" if post_id is not None else f"url={url[-60:]}"
     stripped = strip_query(url)
     t0 = time.monotonic()
     canonical_url: str | None = None
@@ -182,16 +202,16 @@ def fetch_one(post_id: int, url: str, tracks: dict[str, str]) -> dict:
 
     # Step 1: year-fallback against the original (query-stripped) URL.
     for year in WAYBACK_YEARS:
-        log(f"  postId={post_id} /web/{year}/...")
+        log(f"  {log_pid} /web/{year}/...")
         status, body, title, final_url = try_wayback_year(year, stripped)
         last_http_status = status
         if status == 200 and body_looks_real(body):
-            log(f"  postId={post_id} ok via wayback year={year} in {time.monotonic()-t0:.1f}s")
+            log(f"  {log_pid} ok via wayback year={year} in {time.monotonic()-t0:.1f}s")
             return _record(
                 post_id=post_id, url=url, canonical_url=None,
                 source="wayback", fetch_status="ok", http_status=status,
                 body=body or "", title=title or slug_to_title(url),
-                track=track, wayback_year=year, wayback_snapshot_url=final_url,
+                track=audience_track, wayback_year=year, wayback_snapshot_url=final_url,
             )
         time.sleep(INTER_REQUEST_SLEEP_SECONDS)
 
@@ -200,46 +220,52 @@ def fetch_one(post_id: int, url: str, tracks: dict[str, str]) -> dict:
     if canonical_candidate is not None:
         canonical_url = canonical_candidate
         for year in WAYBACK_YEARS:
-            log(f"  postId={post_id} canonical /web/{year}/...")
+            log(f"  {log_pid} canonical /web/{year}/...")
             status, body, title, final_url = try_wayback_year(year, canonical_candidate)
             last_http_status = status
             if status == 200 and body_looks_real(body):
-                log(f"  postId={post_id} ok via canonical wayback year={year} in {time.monotonic()-t0:.1f}s")
+                log(f"  {log_pid} ok via canonical wayback year={year} in {time.monotonic()-t0:.1f}s")
                 return _record(
                     post_id=post_id, url=url, canonical_url=canonical_url,
                     source="wayback", fetch_status="ok", http_status=status,
                     body=body or "", title=title or slug_to_title(url),
-                    track=track, wayback_year=year, wayback_snapshot_url=final_url,
+                    track=audience_track, wayback_year=year, wayback_snapshot_url=final_url,
                 )
             time.sleep(INTER_REQUEST_SLEEP_SECONDS)
 
     # Step 3: live URL fallback (use canonical if we derived one).
     live_target = canonical_url or url
-    log(f"  postId={post_id} live URL...")
+    log(f"  {log_pid} live URL...")
     live_status, live_body, live_title = try_live(live_target)
     if live_status == 200 and body_looks_real(live_body):
-        log(f"  postId={post_id} ok via live in {time.monotonic()-t0:.1f}s")
+        log(f"  {log_pid} ok via live in {time.monotonic()-t0:.1f}s")
         return _record(
             post_id=post_id, url=url, canonical_url=canonical_url,
             source="live", fetch_status="ok", http_status=live_status,
             body=live_body or "", title=live_title or slug_to_title(url),
-            track=track, wayback_year=None, wayback_snapshot_url=None,
+            track=audience_track, wayback_year=None, wayback_snapshot_url=None,
         )
 
     # Step 4: slug-title fallback.
-    log(f"  postId={post_id} fallback in {time.monotonic()-t0:.1f}s")
+    log(f"  {log_pid} fallback in {time.monotonic()-t0:.1f}s")
     return _record(
         post_id=post_id, url=url, canonical_url=canonical_url,
         source="fallback", fetch_status="fallback",
         http_status=live_status if live_status is not None else last_http_status,
         body="", title=slug_to_title(url),
-        track=track, wayback_year=None, wayback_snapshot_url=None,
+        track=audience_track, wayback_year=None, wayback_snapshot_url=None,
     )
+
+
+def fetch_one(post_id: int, url: str, tracks: dict[str, str]) -> dict:
+    """Backward-compatible wrapper used by the test-article pre-gen flow."""
+    track = extract_track(url, tracks)
+    return fetch_article_body(url=url, audience_track=track, post_id=post_id)
 
 
 def _record(
     *,
-    post_id: int,
+    post_id: int | None,
     url: str,
     canonical_url: str | None,
     source: str,
@@ -251,10 +277,10 @@ def _record(
     wayback_year: str | None,
     wayback_snapshot_url: str | None,
 ) -> dict:
-    record: dict = {
-        "postId": int(post_id),
-        "url": url,
-    }
+    record: dict = {}
+    if post_id is not None:
+        record["postId"] = int(post_id)
+    record["url"] = url
     if canonical_url is not None:
         record["canonical_url"] = canonical_url
     record.update({

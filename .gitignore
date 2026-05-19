@@ -26,6 +26,8 @@ data/cache/*
 !data/cache/.gitkeep
 !data/cache/articles/
 !data/cache/articles/*.json
+!data/cache/eval_articles/
+!data/cache/eval_articles/*.json
 !data/cache/embeddings.npz
 !data/cache/embeddings_meta.json
 outputs/*

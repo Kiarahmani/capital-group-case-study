@@ -26,9 +26,39 @@ from capgroup.gen import (
     select_flavors,
 )
 from capgroup.judge import judge_post
+from capgroup.pregen.fetch_articles import fetch_article_body
 from capgroup.retrieval import Retriever, clean_example
 
 TRAIN_XLSX = REPO_ROOT / "data" / "inputs" / "train.xlsx"
+EVAL_ARTICLES_CACHE_DIR = REPO_ROOT / "data" / "cache" / "eval_articles"
+
+
+def url_to_safe_name(url: str) -> str:
+    """Filesystem-safe basename derived from a URL slug."""
+    slug = url.rstrip("/").rsplit("/", 1)[-1]
+    slug = slug.replace(".html", "").split("?")[0]
+    # keep only alphanumerics, dashes, underscores
+    safe = "".join(c if (c.isalnum() or c in "-_") else "_" for c in slug)
+    return safe or "article"
+
+
+def load_or_fetch_eval_article(url: str, audience_track: str) -> dict:
+    """Return a cached eval-article record or fetch + cache it via Wayback."""
+    EVAL_ARTICLES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    safe = url_to_safe_name(url)
+    cache_path = EVAL_ARTICLES_CACHE_DIR / f"{safe}.json"
+    if cache_path.exists():
+        with cache_path.open() as f:
+            return json.load(f)
+    print(f"  fetching eval article body: {url}")
+    record = fetch_article_body(url=url, audience_track=audience_track, post_id=None)
+    with cache_path.open("w") as f:
+        json.dump(record, f, indent=2)
+    if record["fetch_status"] != "ok":
+        print(f"  ! fetch fell back (no body) for {url}")
+    else:
+        print(f"  fetched ok: {record['char_count']} chars from {record['source']}")
+    return record
 
 
 def url_to_title(url: str) -> str:
@@ -160,6 +190,8 @@ class GenAttempt:
     on_topic: int
     hook_strength: int
     compliance: str
+    is_valid_post: str
+    is_valid_post_notes: str
     length_chars: int
     retries: int
     flagged: bool
@@ -209,6 +241,16 @@ def run_holdout_eval(
     print(f"Embedding {len(titles)} held-out slug-titles as Voyage queries...")
     title_query_vecs = embed_via_voyage(voyage_client, titles, "query", embed_model)
 
+    # Pre-fetch (or load cached) article bodies for each held-out URL so generation
+    # has the same grounding it gets on real test articles. Determinism via cache.
+    print(f"\n=== Pre-fetching held-out article bodies ===")
+    article_records_by_url: dict[str, dict] = {}
+    for cluster in clusters:
+        article_records_by_url[cluster.url] = load_or_fetch_eval_article(
+            url=cluster.url,
+            audience_track=cluster.audience_track,
+        )
+
     # GENERATE
     print(f"\n=== Generation pass ===")
     gen_attempts: list[GenAttempt] = []
@@ -222,11 +264,12 @@ def run_holdout_eval(
             dedupe_by_url=True,
             exclude_urls=holdout_url_set,
         )
+        record = article_records_by_url[cluster.url]
         article = {
             "url": cluster.url,
-            "title": cluster.title,
+            "title": record.get("title") or cluster.title,
             "audience_track": cluster.audience_track,
-            "body": "",  # holdout eval: no body, model relies on examples + title
+            "body": record.get("body", "") or "",
         }
         flavors_for_variants = select_flavors(n_variants, flavors_pool)
         for variant_idx, flavor in enumerate(flavors_for_variants, start=1):
@@ -257,6 +300,8 @@ def run_holdout_eval(
                 on_topic=qg.judgment.on_topic,
                 hook_strength=qg.judgment.hook_strength,
                 compliance=qg.judgment.compliance,
+                is_valid_post=qg.judgment.is_valid_post,
+                is_valid_post_notes=qg.judgment.is_valid_post_notes,
                 length_chars=qg.length.char_count,
                 retries=qg.retries_used,
                 flagged=qg.flagged,
@@ -264,6 +309,7 @@ def run_holdout_eval(
             gen_attempts.append(attempt)
             print(f"    v{variant_idx} [{attempt.flavor or '-':<14}] "
                   f"chars={attempt.length_chars} compl={attempt.compliance} "
+                  f"valid={attempt.is_valid_post} "
                   f"voice/topic/hook={attempt.voice_match}/{attempt.on_topic}/{attempt.hook_strength}")
 
     # Embed generated posts (documents — same role as train posts in our embedding space)
@@ -276,12 +322,14 @@ def run_holdout_eval(
     print(f"\n=== Judging real held-out posts (for comparison baseline) ===")
     real_judgments: dict[int, dict] = {}  # postId -> {"voice_match", "on_topic", "hook_strength", "compliance", "notes"}
     for cluster in clusters:
-        # Build a synthetic article dict for the judge call (judge needs article context)
+        # Build the article dict for the judge call (judge uses article body for on_topic check).
+        # Reuse the same fetched body the generator saw so judge and gen share context.
+        record = article_records_by_url[cluster.url]
         article_for_judge = {
             "url": cluster.url,
-            "title": cluster.title,
+            "title": record.get("title") or cluster.title,
             "audience_track": cluster.audience_track,
-            "body": "",
+            "body": record.get("body", "") or "",
         }
         # Retrieve voice examples (excluding the held-out URLs, so judge sees same context as gen)
         # Reuse the same query that gen used
@@ -309,10 +357,12 @@ def run_holdout_eval(
                 "hook_strength": j.hook_strength,
                 "compliance": j.compliance,
                 "compliance_notes": j.compliance_notes,
+                "is_valid_post": j.is_valid_post,
+                "is_valid_post_notes": j.is_valid_post_notes,
                 "notes": j.overall_notes,
             }
             print(f"  real postId={rp['postId']} ({cluster.audience_track}): "
-                  f"voice/topic/hook={j.voice_match}/{j.on_topic}/{j.hook_strength} compl={j.compliance}")
+                  f"voice/topic/hook={j.voice_match}/{j.on_topic}/{j.hook_strength} compl={j.compliance} valid={j.is_valid_post}")
 
     # COMPUTE METRICS
     print(f"\n=== Computing metrics ===")
@@ -336,6 +386,8 @@ def run_holdout_eval(
             "on_topic": attempt.on_topic,
             "hook_strength": attempt.hook_strength,
             "compliance": attempt.compliance,
+            "is_valid_post": attempt.is_valid_post,
+            "is_valid_post_notes": attempt.is_valid_post_notes,
             "length_chars": attempt.length_chars,
             "judge_retries": attempt.retries,
             "judge_flagged": attempt.flagged,
@@ -369,6 +421,8 @@ def run_holdout_eval(
     real_hook = avg([r["hook_strength"] for rs in real_judges_by_url.values() for r in rs])
     real_compl_fail = sum(1 for rs in real_judges_by_url.values() for r in rs if r["compliance"] == "fail")
     gen_compl_fail = sum(1 for row in rows if row["compliance"] == "fail")
+    real_valid_fail = sum(1 for rs in real_judges_by_url.values() for r in rs if r["is_valid_post"] == "fail")
+    gen_valid_fail = sum(1 for row in rows if row["is_valid_post"] == "fail")
     n_real = sum(len(rs) for rs in real_judges_by_url.values())
 
     md = [f"# Held-out evaluation — {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}", ""]
@@ -393,6 +447,7 @@ def run_holdout_eval(
     md.append(f"| on_topic      | {gen_topic:.2f}            | {real_topic:.2f}                | {gen_topic - real_topic:+.2f} |")
     md.append(f"| hook_strength | {gen_hook:.2f}            | {real_hook:.2f}                | {gen_hook - real_hook:+.2f} |")
     md.append(f"| compliance fails | {gen_compl_fail}/{len(rows)} | {real_compl_fail}/{n_real} | — |")
+    md.append(f"| is_valid_post fails | {gen_valid_fail}/{len(rows)} | {real_valid_fail}/{n_real} | — |")
     md.append("")
     md.append("## Per-cluster results")
     md.append("| URL slug | track | real pool | gen_vs_best (avg) | inter-human ceiling |")

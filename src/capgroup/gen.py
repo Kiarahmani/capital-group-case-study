@@ -236,7 +236,11 @@ def generate_with_quality_gate(
             "retry_feedback_used": retry_feedback,
         })
 
-        if length_result.in_envelope and judgment.compliance == "pass":
+        if (
+            length_result.in_envelope
+            and judgment.compliance == "pass"
+            and judgment.is_valid_post == "pass"
+        ):
             return QualityGateResult(
                 post=post,
                 raw_response=gen_result["raw_response"],
@@ -254,12 +258,21 @@ def generate_with_quality_gate(
             feedback_parts.append(length_result.feedback)
         if judgment.compliance == "fail":
             feedback_parts.append(f"Compliance issue: {judgment.compliance_notes}")
+        if judgment.is_valid_post == "fail":
+            feedback_parts.append(
+                f"Output format issue: your previous attempt was not a publishable post. "
+                f"Issue: {judgment.is_valid_post_notes}. Output ONLY the social media post "
+                f"itself — no preamble, no operator-directed text, no explanations about "
+                f"missing information. If specific facts you'd want to use aren't available, "
+                f"use a general topical framing instead."
+            )
         retry_feedback = " ".join(feedback_parts)
 
     def score_attempt(a):
         return (
             int(a["length"].in_envelope),
             int(a["judgment"].compliance == "pass"),
+            int(a["judgment"].is_valid_post == "pass"),
             a["judgment"].soft_score_sum,
         )
 
@@ -377,6 +390,8 @@ def run_generation(
                     "hookStrength": j.hook_strength,
                     "compliance": j.compliance,
                     "complianceNotes": j.compliance_notes,
+                    "isValidPost": j.is_valid_post,
+                    "isValidPostNotes": j.is_valid_post_notes,
                     "lengthChars": qg.length.char_count,
                     "judgeRetries": qg.retries_used,
                     "judgeFlagged": qg.flagged,
@@ -404,6 +419,8 @@ def run_generation(
                             "length_in_envelope": a["length"].in_envelope,
                             "compliance": a["judgment"].compliance,
                             "compliance_notes": a["judgment"].compliance_notes,
+                            "is_valid_post": a["judgment"].is_valid_post,
+                            "is_valid_post_notes": a["judgment"].is_valid_post_notes,
                             "voice_match": a["judgment"].voice_match,
                             "on_topic": a["judgment"].on_topic,
                             "hook_strength": a["judgment"].hook_strength,

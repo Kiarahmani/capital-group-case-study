@@ -56,9 +56,9 @@ Notes:
 ## Engineering evidence (committed to repo)
 
 - **[`outputs/one_pager.txt`](outputs/one_pager.txt)** — the writeup.
-- **[`outputs/eval_20260518T232813Z.md`](outputs/eval_20260518T232813Z.md)** — held-out evaluation summary (gen vs human cluster on cosine + judge rubric).
-- **[`outputs/eval_20260518T232813Z.csv`](outputs/eval_20260518T232813Z.csv)** — per-generated-post metrics from the eval run.
-- **[`outputs/gen_20260518T232812Z_trace.jsonl`](outputs/gen_20260518T232812Z_trace.jsonl)** — per-call provenance for the final Sonnet run: retrieved example postIds, retry attempts, judge notes, token usage.
+- **[`outputs/eval_20260519T172959Z.md`](outputs/eval_20260519T172959Z.md)** — held-out evaluation summary (gen vs human cluster on cosine + judge rubric).
+- **[`outputs/eval_20260519T172959Z.csv`](outputs/eval_20260519T172959Z.csv)** — per-generated-post metrics from the eval run.
+- **[`outputs/gen_20260519T180346Z_trace.jsonl`](outputs/gen_20260519T180346Z_trace.jsonl)** — per-call provenance for the final Sonnet run: retrieved example postIds, retry attempts, judge notes, token usage.
 - **[`outputs/style_audit.md`](outputs/style_audit.md)** + `style_audit.json` — deterministic corpus statistics.
 - **[`outputs/disclosure_url_audit.md`](outputs/disclosure_url_audit.md)** — canonical disclosure URL extraction.
 

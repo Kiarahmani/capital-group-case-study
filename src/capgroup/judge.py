@@ -46,6 +46,15 @@ JUDGE_TOOL = {
                 "type": "string",
                 "description": "If compliance='fail', specify the exact phrase that triggered failure. Otherwise empty string.",
             },
+            "is_valid_post": {
+                "type": "string",
+                "enum": ["pass", "fail"],
+                "description": "Pass if the text reads as a publishable social media post directed at the reader. Fail if it contains meta-commentary, refusal language, operator-directed explanations (e.g., 'The article body doesn't include...'), or any sentence aimed at the system operator rather than the audience. A post can be weak (low voice/topic/hook) and still be is_valid_post=pass — this gate is purely about output shape, not quality.",
+            },
+            "is_valid_post_notes": {
+                "type": "string",
+                "description": "If is_valid_post='fail', specify the exact phrase that triggered failure. Otherwise empty string.",
+            },
             "overall_notes": {
                 "type": "string",
                 "description": "One or two sentences summarizing strengths and weaknesses.",
@@ -57,6 +66,8 @@ JUDGE_TOOL = {
             "hook_strength",
             "compliance",
             "compliance_notes",
+            "is_valid_post",
+            "is_valid_post_notes",
             "overall_notes",
         ],
     },
@@ -78,6 +89,14 @@ Compliance does NOT fail for:
 - Mentions of asset classes (bonds, equities, cash)
 - Hedge language ("could", "may", "potentially")
 
+Output-shape check (is_valid_post) is a separate concern from quality scoring. A post can score 1/1/1 on the soft rubrics and still be is_valid_post=pass, as long as it reads as a post aimed at the reader. It fails only when the text is meta-commentary, refusal, operator-directed explanation, or otherwise not a publishable social media post.
+
+Examples of is_valid_post=fail:
+- "The article body doesn't include specific numbers to draw from. Here is a post based on..."
+- "I don't have enough information to write a stat-led post. Please provide..."
+- "Without the article body, I can only offer a generic post: ..."
+- Any text that begins by explaining what the system can or cannot do.
+
 Use the record_judgment tool to record your judgment. Do not respond with prose."""
 
 
@@ -95,6 +114,8 @@ class JudgeResult:
     hook_strength: int
     compliance: Literal["pass", "fail"]
     compliance_notes: str
+    is_valid_post: Literal["pass", "fail"]
+    is_valid_post_notes: str
     overall_notes: str
     raw_response: dict = field(default_factory=dict)
     usage: dict = field(default_factory=dict)
@@ -144,6 +165,8 @@ def format_calibration_examples(examples: list[dict]) -> str:
             f"  hook_strength: {ex['hook_strength']}\n"
             f"  compliance: {ex['compliance']}\n"
             f"  compliance_notes: {ex.get('compliance_notes', '')}\n"
+            f"  is_valid_post: {ex.get('is_valid_post', 'pass')}\n"
+            f"  is_valid_post_notes: {ex.get('is_valid_post_notes', '')}\n"
             f"  reasoning: {ex['reasoning']}"
         )
     return "\n\n".join(parts)
@@ -222,6 +245,8 @@ def judge_post(
         hook_strength=j["hook_strength"],
         compliance=j["compliance"],
         compliance_notes=j["compliance_notes"],
+        is_valid_post=j["is_valid_post"],
+        is_valid_post_notes=j["is_valid_post_notes"],
         overall_notes=j["overall_notes"],
         raw_response=j,
         usage={

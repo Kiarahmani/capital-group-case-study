@@ -17,7 +17,9 @@ Pre-generation (one-time):
     one canonical disclosure URL (bit.ly/2JzEDWl, 180 occurrences).
   - Article body acquisition. Live capitalgroup.com URLs are
     auth-walled by Akamai; bodies sourced from Wayback Machine
-    snapshots via year-fallback (2024 → 2023 → 2025). 16/16 recovered.
+    snapshots via year-fallback (2024 → 2023 → 2025). 16/16 recovered
+    for the test set; the same fetcher is reused for held-out eval
+    URLs.
   - Voyage 3.5 embeddings of 279 train postOriginals (as documents)
     and 16 test article bodies (as queries). Asymmetric document/query
     encoding for retrieval quality. URLs and disclosure trailers
@@ -37,43 +39,56 @@ Generation (per test article, per variant):
     stat_lead, contrarian, theme_summary (4 of 6 configured). Each
     flavor is a one-line style direction injected into the uncached
     delta.
-  - Inline quality gate: programmatic length check (100-350 chars)
-    plus an LLM judge using Claude tool-use for forced structured
-    output. Judge scores voice/topic/hook (1-5) and compliance
-    (pass/fail) with notes. Hard-gate failure (length or compliance)
-    triggers retry with feedback injected into the uncached delta,
-    max 2 retries; cached chunks preserved across retries.
-  - Judge calibrated via 5 few-shot examples in config covering
-    positive cases and the four compliance trigger types (return
-    claims, buy/sell verbs, guarantees, single-ticker mentions).
+  - Inline quality gate: three hard gates plus three soft scores per
+    variant. Hard gates trigger retry with targeted feedback:
+      (1) Programmatic length check (100-350 chars).
+      (2) Compliance check (LLM-as-judge, pass/fail): no specific
+          return claims, no buy/sell verbs, no guarantee language, no
+          single-ticker mentions.
+      (3) Output-shape check is_valid_post (same judge, pass/fail):
+          is this a publishable post directed at the reader, or
+          meta-commentary aimed at the operator? Catches refusal-style
+          outputs that pass compliance regex but aren't actually posts.
+    Soft scores (voice_match, on_topic, hook_strength, 1-5 each) are
+    reported but never trigger retries. Judge uses Claude tool-use for
+    forced structured JSON output. Hard-gate failure triggers retry
+    with specific feedback injected into the uncached delta; cached
+    chunks preserved across retries; max 2 retries; best-attempt
+    selection if budget exhausted.
+  - Judge calibrated via 7 few-shot examples in config covering
+    positive cases, the four compliance trigger types (return claims,
+    buy/sell verbs, guarantees, single-ticker mentions), and two
+    is_valid_post failure modes (meta-commentary preamble, refusal).
 
 FINDINGS
 
   Held-out evaluation on 10 URLs (7 advisor / 2 institutional /
   1 content, biased toward URLs with 3+ paraphrase pairs in the train
   corpus). For each held-out URL, removed all paraphrases from the
-  retrieval pool, generated 4 variants using slug-title query +
-  remaining train as examples, compared against the URL's real-post
-  cluster.
+  retrieval pool, fetched the URL's article body via Wayback,
+  generated 4 variants, compared against the URL's real-post cluster.
 
   Embedding similarity (cosine in Voyage 3.5 space):
-    - gen vs best-real (avg across 40 gen posts):  0.814
+    - gen vs best-real (avg across 40 gen posts):  0.817
     - inter-human ceiling (avg pairwise cosine
       within multi-paraphrase clusters):           0.811
-    - Gap:                                          -0.003
+    - Gap:                                          +0.006
 
-  Generated posts land at the inter-human ceiling. The pipeline
-  produces posts as similar to a real Capital Group post as Capital
-  Group's own writers' posts are to each other. Per-cluster signal is
-  mixed — on some URLs we sit above ceiling (possible mode collapse
-  to a common safe template), on others below (humans more cohesive).
-  Aggregated: parity.
+  Generated posts narrowly exceed the inter-human ceiling on aggregate.
+  Per-cluster signal is mixed — we land below the ceiling on 7 of 10
+  URLs and above on 3. The aggregate exceedance is driven by a few
+  clusters with naturally low inter-human similarity (e.g.,
+  `us-midterm-elections-will-house-flip` ceiling 0.755, gen 0.843),
+  where the model's tighter style envelope dominates. Honestly framed:
+  parity with mild signs of mode-narrowing on subset URLs.
 
-  Judge scores (Claude Sonnet 4.6 judge applied to both):
-    - voice_match:           gen 4.67   vs   real 3.80    gap +0.88
-    - on_topic:              gen 4.17   vs   real 3.14    gap +1.03
-    - hook_strength:         gen 3.67   vs   real 2.97    gap +0.70
-    - compliance failures:   gen 0/40   vs   real 2/35
+  Judge scores (Claude Sonnet 4.6 judge applied to both, with article
+  body in scope for both):
+    - voice_match:           gen 4.58   vs   real 3.31    gap +1.26
+    - on_topic:              gen 4.75   vs   real 3.20    gap +1.55
+    - hook_strength:         gen 4.00   vs   real 2.74    gap +1.26
+    - compliance failures:   gen 0/40   vs   real 0/35
+    - is_valid_post failures: gen 0/40   vs   real 0/35
 
   Generated posts score above the human reference on all three soft
   rubrics. Three honest interpretations:
@@ -82,36 +97,46 @@ FINDINGS
         generator used. It may reward gen for matching them.
 
     (2) Human variance. Real corpus posts span the full quality range
-        (in the eval slice, some real posts score 2/1/1 on this
-        rubric). Generated posts cluster tighter and safer. Two of
-        the 35 held-out real posts even fail compliance per the same
-        judge — the corpus average is not uniformly strong.
+        (in the eval slice, soft-score minima reach 1/1/1). Generated
+        posts cluster tighter and safer. With article body in scope
+        for the judge, the on_topic gap widens — suggesting gen posts
+        more reliably anchor to article content while real posts
+        paraphrase loosely.
 
-    (3) Genuine pipeline quality. Possibly the pipeline produces more
-        consistent marketing copy than the human corpus average,
-        because it combines a tuned system prompt + retrieved
-        exemplars + compliance gate + flavor diversity in one pass.
+    (3) Genuine pipeline quality. The pipeline combines a tuned system
+        prompt + retrieved exemplars + three hard gates + flavor
+        diversity in one pass — possibly producing more reliably
+        on-target marketing copy than the human corpus average.
 
   All three are partly true. The strongest defensible read: the
-  pipeline produces posts that are statistically indistinguishable
-  from the human corpus on embedding similarity, and judged at or
-  above the human baseline by a Sonnet evaluator on voice / topic /
-  hook quality, with a perfect compliance record.
+  pipeline produces posts that sit at or above the inter-human
+  similarity ceiling, and are judged at or above the human baseline by
+  a Sonnet evaluator with article body in scope, with a perfect
+  compliance and output-shape record.
 
   Submission run quality gate behavior (16 articles × 4 variants
   with --flavors all, Claude Sonnet 4.6):
     - Posts produced:                 64
     - Compliance failures (final):    0/64
-    - Compliance failures (any
-      attempt across 67 calls):       0
+    - is_valid_post failures (final): 0/64
     - Length envelope adherence:      64/64 in 100-350 chars
-                                      (range 147-342, median 261)
-    - Retries triggered:              2/64 (resolved on attempt 2)
+                                      (range 172-344, median 260)
+    - Retries triggered:              2/64 (both resolved on attempt 2)
     - Posts flagged out of budget:    0/64
     - Cache hit rate on judge calls:  16/16 articles engaged
-                                      (Sonnet's 1024-token minimum
-                                      vs Haiku's 2048)
-    - Total cost (gen + judge):       $0.75
+    - Total cost (gen + judge):       $0.79
+
+  Worth highlighting: the is_valid_post gate caught a real
+  meta-commentary failure during the deliverable run. PostId 334 v2
+  (stat_lead, advisor) produced on its first attempt: "The style
+  direction asks for a specific number or percentage, but the article
+  body doesn't contain any. I'll open with a reference to the concrete
+  market signal..." This text would have passed compliance (no banned
+  phrases) and length-checked at 515 chars (caught by the length
+  gate, but length-only retry wouldn't have removed the meta-text).
+  The combined gate retry with feedback produced a clean valid post
+  on attempt 2. Without the is_valid_post gate, this would have
+  shipped.
 
 LIMITATIONS
   - Article body sourced from Wayback, not live API. Capital Group
@@ -126,10 +151,6 @@ LIMITATIONS
   - Institutional track is sparse (34 train posts vs 231 advisor).
     Retrieval signal for institutional articles weaker (top similarity
     ~0.5 vs ~0.7 on advisor). No cross-track fallback in v1.
-  - Eval uses slug-title only (no body) for held-out URL queries.
-    Judge's on_topic score for both gen and real posts is computed
-    without article-body context, so the absolute on_topic number is
-    less informative than the gen-vs-real gap.
   - Judge bias risk: the judge sees the same retrieval examples that
     gen used. May over-reward gen for matching those examples. The
     favorable gen-vs-real judge gap should be read with this caveat.
@@ -162,13 +183,13 @@ STACK
   caching, tool-use for judge structured output). Voyage 3.5
   embeddings (document/query asymmetric). trafilatura (article
   extraction), pandas, typer, openpyxl. Repo:
-  github.com/[username]/capital-group-case-study.
+  github.com/Kiarahmani/capital-group-case-study.
 
 OUTPUT BUNDLE
   - posts.csv / posts.xlsx — long-format: postId, variantId, flavor,
     audienceTrack, articleUrl, generatedPost, voiceMatch, onTopic,
-    hookStrength, compliance, complianceNotes, lengthChars,
-    judgeRetries, judgeFlagged.
+    hookStrength, compliance, complianceNotes, isValidPost,
+    isValidPostNotes, lengthChars, judgeRetries, judgeFlagged.
   - trace.jsonl — per-call provenance: retrieved example postIds and
     similarities, all retry attempts with judge notes, token usage.
   - eval.csv / eval_summary.md — held-out evaluation findings.
